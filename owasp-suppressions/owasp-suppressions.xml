@@ -301,7 +301,7 @@
 
    <!-- If we specify an until in 12 months time, it will give us an opportunity to check again,
         also if it no longer triggers after this date we can remove the supression. -->
-   <suppress until="2026-03-11">
+   <suppress until="2027-10-30">
       <notes><![CDATA[
       file name: apacheds-interceptors-admin-2.0.0.AM26.jar
       ]]></notes>
@@ -309,7 +309,7 @@
       <packageUrl regex="true">^pkg:maven/org\.apache\.directory\.server/apacheds\-.*@.*$</packageUrl>
       <cve>CVE-2010-1151</cve>
    </suppress>
-   <suppress until="2026-03-11">
+   <suppress until="2027-10-30">
       <notes><![CDATA[
       file name: mina-core-2.1.3.jar
       ]]></notes>
@@ -331,14 +331,14 @@
       <packageUrl regex="true">^pkg:maven/org\.glassfish\.soteria/jakarta\.security\.enterprise@.*$</packageUrl>
       <vulnerabilityName>CVE-2020-1732</vulnerabilityName>
    </suppress>
-   <suppress until="2026-03-11">
+   <suppress until="2027-10-30">
       <notes><![CDATA[
       file name: jgroups-aws-3.0.0.Final.jar
       ]]></notes>
       <packageUrl regex="true">^pkg:maven/org\.jgroups\.aws/jgroups\-aws@.*$</packageUrl>
       <cve>CVE-2016-2141</cve>
    </suppress>
-   <suppress until="2026-03-11">
+   <suppress until="2027-10-30">
       <notes><![CDATA[
       file name: commons-compress-1.24.0.jar
       ]]></notes>
@@ -405,7 +405,7 @@
       <cve>CVE-2025-11965</cve>
       <cve>CVE-2025-11966</cve>
    </suppress>
-   <suppress until="2026-01-03">
+   <suppress until="2027-10-30">
       <notes><![CDATA[
       file name: mina-core-2.1.3.jar
 
@@ -414,7 +414,7 @@
       <packageUrl regex="true">^pkg:maven/org\.apache\.mina/mina-core@.*$</packageUrl>
       <vulnerabilityName>CVE-2024-52046</vulnerabilityName>
    </suppress>
-   <suppress until="2026-06-11">
+   <suppress until="2027-10-30">
       <notes><![CDATA[
       file name: hal-console-3.7.12.Final-resources.jar
 

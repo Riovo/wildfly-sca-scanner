@@ -1,0 +1,50 @@
+name: Validate Suppressions
+
+on:
+  push:
+    paths:
+      - 'suppressions/**'
+      - 'owasp-suppressions/**'
+      - 'scripts/suppressions/**'
+      - 'tests/**'
+  pull_request:
+    paths:
+      - 'suppressions/**'
+      - 'owasp-suppressions/**'
+      - 'scripts/suppressions/**'
+      - 'tests/**'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r scripts/suppressions/requirements.txt pytest
+
+      - name: Validate canonical YAML
+        run: python scripts/suppressions/validate.py suppressions/suppressions.yaml
+
+      - name: Regenerate Trivy ignore file
+        run: python scripts/suppressions/convert_to_trivy.py suppressions/suppressions.yaml suppressions/.trivyignore-check.yaml
+
+      - name: Check Trivy ignore file is up to date
+        run: diff suppressions/.trivyignore.yaml suppressions/.trivyignore-check.yaml
+
+      - name: Regenerate OWASP DC XML
+        run: python scripts/suppressions/convert_to_owaspdc.py suppressions/suppressions.yaml owasp-suppressions/owasp-suppressions-check.xml
+
+      - name: Check OWASP DC XML is up to date
+        run: diff owasp-suppressions/owasp-suppressions-roundtrip.xml owasp-suppressions/owasp-suppressions-check.xml
+
+      - name: Run test suite
+        run: python -m pytest tests/ -v

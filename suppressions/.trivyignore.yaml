@@ -1,0 +1,277 @@
+# Generated from suppressions/suppressions.yaml — do not edit directly.
+# Regenerate with: python scripts/suppressions/convert_to_trivy.py
+
+vulnerabilities:
+- id: CVE-2010-1151
+  statement: 'Triaged globally (original pattern: ^pkg:maven/org\.apache\.directory\.server/apacheds\-.*@.*$)'
+  expired_at: 2027-10-30
+- id: CVE-2021-41973
+  purls:
+  - pkg:maven/org.apache.mina/mina-core
+  expired_at: 2027-10-30
+  statement: 'file name: mina-core-2.1.3.jar'
+- id: CVE-2018-14335
+  purls:
+  - pkg:maven/com.h2database/h2
+  expired_at: 2027-03-26
+  statement: 'file name: h2-2.2.224.jar'
+- id: CVE-2020-1732
+  purls:
+  - pkg:maven/org.glassfish.soteria/jakarta.security.enterprise
+  expired_at: 2027-03-26
+  statement: 'file name: jakarta.security.enterprise-3.0.3.jar'
+- id: CVE-2016-2141
+  purls:
+  - pkg:maven/org.jgroups.aws/jgroups-aws
+  expired_at: 2027-10-30
+  statement: 'file name: jgroups-aws-3.0.0.Final.jar'
+- id: CVE-2024-25710
+  purls:
+  - pkg:maven/org.apache.commons/commons-compress
+  expired_at: 2027-10-30
+  statement: 'file name: commons-compress-1.24.0.jar'
+- id: CVE-2024-26308
+  purls:
+  - pkg:maven/org.apache.commons/commons-compress
+  expired_at: 2027-10-30
+  statement: 'file name: commons-compress-1.24.0.jar'
+- id: CVE-2016-9606
+  purls:
+  - pkg:maven/org.jboss.resteasy.spring/resteasy-spring
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-spring-3.0.4.Final.jar'
+- id: CVE-2014-3490
+  purls:
+  - pkg:maven/org.jboss.resteasy.spring/resteasy-spring
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-spring-3.0.4.Final.jar'
+- id: CVE-2020-1695
+  purls:
+  - pkg:maven/org.jboss.resteasy.spring/resteasy-spring
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-spring-3.0.4.Final.jar'
+- id: CVE-2020-10688
+  purls:
+  - pkg:maven/org.jboss.resteasy.spring/resteasy-spring
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-spring-3.0.4.Final.jar'
+- id: CVE-2023-0482
+  purls:
+  - pkg:maven/org.jboss.resteasy.spring/resteasy-spring
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-spring-3.0.4.Final.jar'
+- id: CVE-2020-25633
+  purls:
+  - pkg:maven/org.jboss.resteasy.spring/resteasy-spring
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-spring-3.0.4.Final.jar'
+- id: CVE-2021-20289
+  purls:
+  - pkg:maven/org.jboss.resteasy.spring/resteasy-spring
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-spring-3.0.4.Final.jar'
+- id: CVE-2016-9606
+  purls:
+  - pkg:maven/org.jboss.resteasy/resteasy-tracing-api
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-tracing-api-2.0.1.Final.jar'
+- id: CVE-2020-10688
+  purls:
+  - pkg:maven/org.jboss.resteasy/resteasy-tracing-api
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-tracing-api-2.0.1.Final.jar'
+- id: CVE-2023-0482
+  purls:
+  - pkg:maven/org.jboss.resteasy/resteasy-tracing-api
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-tracing-api-2.0.1.Final.jar'
+- id: CVE-2020-25633
+  purls:
+  - pkg:maven/org.jboss.resteasy/resteasy-tracing-api
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-tracing-api-2.0.1.Final.jar'
+- id: CVE-2021-20289
+  purls:
+  - pkg:maven/org.jboss.resteasy/resteasy-tracing-api
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-tracing-api-2.0.1.Final.jar'
+- id: CVE-2011-5245
+  purls:
+  - pkg:maven/org.jboss.resteasy/resteasy-tracing-api
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-tracing-api-2.0.1.Final.jar'
+- id: CVE-2012-0818
+  purls:
+  - pkg:maven/org.jboss.resteasy/resteasy-tracing-api
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-tracing-api-2.0.1.Final.jar'
+- id: CVE-2016-6311
+  purls:
+  - pkg:maven/io.undertow/undertow-core
+  expired_at: 2027-03-26
+  statement: 'file name: undertow-core-2.3.12.Final.jar'
+- id: CVE-2021-20293
+  purls:
+  - pkg:maven/org.jboss.resteasy.spring/resteasy-spring
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-spring-3.0.4.Final.jar'
+- id: CVE-2021-20293
+  purls:
+  - pkg:maven/org.jboss.resteasy/resteasy-tracing-api
+  expired_at: 2027-03-26
+  statement: 'file name: resteasy-tracing-api-2.0.1.Final.jar'
+- id: CVE-2024-8391
+  purls:
+  - pkg:maven/io.vertx/vertx-kafka-client
+  expired_at: 2027-01-30
+  statement: 'file name: vertx-kafka-client-4.4.9.jar | https://github.com/darranl/aphrodite/issues/34 Suppress CVE-2025-11965
+    and CVE-2025-11966'
+- id: CVE-2025-11965
+  purls:
+  - pkg:maven/io.vertx/vertx-kafka-client
+  expired_at: 2027-01-30
+  statement: 'file name: vertx-kafka-client-4.4.9.jar | https://github.com/darranl/aphrodite/issues/34 Suppress CVE-2025-11965
+    and CVE-2025-11966'
+- id: CVE-2025-11966
+  purls:
+  - pkg:maven/io.vertx/vertx-kafka-client
+  expired_at: 2027-01-30
+  statement: 'file name: vertx-kafka-client-4.4.9.jar | https://github.com/darranl/aphrodite/issues/34 Suppress CVE-2025-11965
+    and CVE-2025-11966'
+- id: CVE-2024-52046
+  purls:
+  - pkg:maven/org.apache.mina/mina-core
+  expired_at: 2027-10-30
+  statement: 'file name: mina-core-2.1.3.jar'
+- id: CVE-2025-2901
+  purls:
+  - pkg:maven/org.jboss.hal/hal-console
+  expired_at: 2027-10-30
+  statement: 'file name: hal-console-3.7.12.Final-resources.jar'
+- id: CVE-2025-4949
+  statement: 'Triaged globally (original pattern: ^pkg:maven/org\.eclipse\.jgit/org\.eclipse\.jgit.*@6\.10\.1.*$)'
+- id: CVE-2022-0866
+  statement: 'Triaged globally (original pattern: ^pkg:maven/org\.wildfly/.*@.*$)'
+- id: CVE-2024-52979
+  statement: 'Triaged globally (original pattern: ^pkg:maven/org\.elasticsearch\.client/elasticsearch-rest-client.*@.*$)'
+  expired_at: 2027-01-23
+- id: CVE-2025-37731
+  statement: 'Triaged globally (original pattern: ^pkg:maven/org\.elasticsearch\.client/elasticsearch-rest-client.*@.*$)'
+  expired_at: 2027-01-23
+- id: CVE-2025-68384
+  statement: 'Triaged globally (original pattern: ^pkg:maven/org\.elasticsearch\.client/elasticsearch-rest-client.*@.*$)'
+  expired_at: 2027-01-23
+- id: CVE-2025-37727
+  statement: 'Triaged globally (original pattern: ^pkg:maven/org\.elasticsearch\.client/elasticsearch-rest-client.*@.*$)'
+  expired_at: 2027-01-23
+- id: CVE-2025-68390
+  statement: 'Triaged globally (original pattern: ^pkg:maven/org\.elasticsearch\.client/elasticsearch-rest-client.*@.*$)'
+  expired_at: 2027-01-23
+- id: CVE-2026-56148
+  statement: 'Triaged globally (original pattern: ^pkg:maven/org\.elasticsearch\.client/elasticsearch-rest-client.*@.*$)'
+  expired_at: 2027-01-23
+- id: CVE-2026-56149
+  statement: 'Triaged globally (original pattern: ^pkg:maven/org\.elasticsearch\.client/elasticsearch-rest-client.*@.*$)'
+  expired_at: 2027-01-23
+- id: CVE-2025-7962
+  purls:
+  - pkg:maven/org.eclipse.angus/angus-activation
+  expired_at: 2026-11-28
+  statement: 'file name: angus-activation-2.0.3.jar | https://github.com/darranl/aphrodite/issues/18 SMTPTransport is not
+    a part of angus-activation.'
+- id: CVE-2025-68161
+  purls:
+  - pkg:maven/org.apache.logging.log4j/log4j-api
+  statement: 'file name: log4j-api-2.23.1.jar | https://github.com/darranl/aphrodite/issues/30'
+- id: CVE-2025-23368
+  statement: 'Triaged globally (original pattern: ^pkg:maven/org\.wildfly\.core/.*@.*$)'
+- id: CVE-2026-34478
+  purls:
+  - pkg:maven/org.apache.logging.log4j/log4j-api
+  expired_at: 2027-05-01
+  statement: 'file name: log4j-api-2.23.1.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/59'
+- id: CVE-2026-34480
+  purls:
+  - pkg:maven/org.apache.logging.log4j/log4j-api
+  expired_at: 2027-05-01
+  statement: 'file name: log4j-api-2.23.1.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/59'
+- id: CVE-2026-34481
+  purls:
+  - pkg:maven/org.apache.logging.log4j/log4j-api
+  expired_at: 2027-05-01
+  statement: 'file name: log4j-api-2.23.1.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/59'
+- id: CVE-2026-34479
+  purls:
+  - pkg:maven/org.apache.logging.log4j/log4j-api
+  expired_at: 2027-05-20
+  statement: 'file name: log4j-api-2.23.1.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/63'
+- id: CVE-2026-34477
+  purls:
+  - pkg:maven/org.apache.logging.log4j/log4j-api
+  expired_at: 2027-05-20
+  statement: 'file name: log4j-api-2.23.1.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/63'
+- id: CVE-2024-9329
+  statement: 'Triaged globally (original pattern: ^pkg:maven/com\.sun\.xml\.bind\.external/(relaxng-datatype|rngom)@.*$)'
+  expired_at: 2027-06-08
+- id: CVE-2026-2586
+  statement: 'Triaged globally (original pattern: ^pkg:maven/com\.sun\.xml\.bind\.external/(relaxng-datatype|rngom)@.*$)'
+  expired_at: 2027-06-08
+- id: CVE-2026-2587
+  statement: 'Triaged globally (original pattern: ^pkg:maven/com\.sun\.xml\.bind\.external/(relaxng-datatype|rngom)@.*$)'
+  expired_at: 2027-06-08
+- id: CVE-2017-12174
+  purls:
+  - pkg:maven/org.apache.activemq/activemq-artemis-native
+  expired_at: 2027-06-22
+  statement: 'file name: activemq-artemis-native-2.0.0.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/72'
+- id: CVE-2021-26117
+  purls:
+  - pkg:maven/org.apache.activemq/activemq-artemis-native
+  expired_at: 2027-06-22
+  statement: 'file name: activemq-artemis-native-2.0.0.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/72'
+- id: CVE-2021-4040
+  purls:
+  - pkg:maven/org.apache.activemq/activemq-artemis-native
+  expired_at: 2027-06-22
+  statement: 'file name: activemq-artemis-native-2.0.0.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/72'
+- id: CVE-2022-23913
+  purls:
+  - pkg:maven/org.apache.activemq/activemq-artemis-native
+  expired_at: 2027-06-22
+  statement: 'file name: activemq-artemis-native-2.0.0.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/72'
+- id: CVE-2022-35278
+  purls:
+  - pkg:maven/org.apache.activemq/activemq-artemis-native
+  expired_at: 2027-06-22
+  statement: 'file name: activemq-artemis-native-2.0.0.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/72'
+- id: CVE-2023-50780
+  purls:
+  - pkg:maven/org.apache.activemq/activemq-artemis-native
+  expired_at: 2027-06-22
+  statement: 'file name: activemq-artemis-native-2.0.0.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/72'
+- id: CVE-2025-27391
+  purls:
+  - pkg:maven/org.apache.activemq/activemq-artemis-native
+  expired_at: 2027-06-22
+  statement: 'file name: activemq-artemis-native-2.0.0.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/72'
+- id: CVE-2025-27427
+  purls:
+  - pkg:maven/org.apache.activemq/activemq-artemis-native
+  expired_at: 2027-06-22
+  statement: 'file name: activemq-artemis-native-2.0.0.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/72'
+- id: CVE-2026-32642
+  purls:
+  - pkg:maven/org.apache.activemq/activemq-artemis-native
+  expired_at: 2027-06-22
+  statement: 'file name: activemq-artemis-native-2.0.0.jar | https://github.com/wildfly-security/wildfly-sca-scanner/issues/72'
+- id: CVE-2026-54399
+  statement: 'Triaged globally (original pattern: ^pkg:maven/org\.apache\.httpcomponents/httpcore(-nio)?@4\..*$)'
+  expired_at: 2027-07-14
+- id: CVE-2026-54428
+  statement: 'Triaged globally (original pattern: ^pkg:maven/org\.apache\.httpcomponents/httpcore(-nio)?@4\..*$)'
+  expired_at: 2027-07-14
+- id: CVE-2026-41115
+  purls:
+  - pkg:maven/org.apache.kafka/kafka-clients
+  expired_at: 2027-07-14
+  statement: 'file name: kafka-clients-4.2.1.jar'

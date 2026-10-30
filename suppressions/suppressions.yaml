@@ -1,0 +1,692 @@
+# Canonical vulnerability suppression rules
+# Source of truth — scanner-specific formats are generated from this file.
+# Migrated from owasp-suppressions/owasp-suppressions.xml
+
+version: '1.0'
+suppressions:
+- id: cpe-orgwildflyinstallation-manager-installation-manager-api-
+  type: cpe-correction
+  notes: "file name: installation-manager-api-1.2.1.Final.jar\n\n      WildFly Installation Manager API is being incorrectly\
+    \ mapped to multiple unrelated products:\n      - IBM Installation Manager (CVE-2009-3518)\n      - IBM Rational ClearCase\
+    \ (CVE-2014-6134)\n      - Red Hat Developer Hub (CVE-2023-6944)\n\n      The POM contains developer metadata pointing\
+    \ to IBM (developer org), and the version number (1.2.1)\n      matches RHDH versions, causing the scanner to incorrectly\
+    \ associate this with these products.\n      This is WildFly's own installation manager API, not IBM or RHDH products."
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.installation\-manager/installation\-manager\-api@.*$
+  suppress:
+    cpes:
+    - cpe:/a:ibm:installation_manager
+    - cpe:/a:ibm:rational_clearcase
+    - cpe:/a:redhat:red_hat_developer_hub
+- id: cpe-iogrpc-grpc-api-grpc
+  type: cpe-correction
+  notes: "file name: grpc-api-1.70.0.jar\n\n      WildFly uses the Java gRPC library (pkg:maven/io.grpc/grpc-api) which should\
+    \ not be mapped to\n      gRPC-Go CPEs. The Java and Go implementations are separate codebases with different vulnerabilities.\n\
+    \n      Suppressing: cpe:2.3:a:grpc:grpc:*:*:*:*:*:go:*:* (note the :go: platform indicator)"
+  match:
+    package-url: ^pkg:maven/io\.grpc/grpc-api@.*$
+  suppress:
+    cpes:
+    - cpe:/a:grpc:grpc
+- id: cpe-ioopentelemetry-opentelemetry
+  type: cpe-correction
+  notes: "file name: opentelemetry-proto-1.5.0-alpha.jar, opentelemetry-semconv-1.32.0.jar, etc.\n\n      WildFly uses Java\
+    \ OpenTelemetry libraries (pkg:maven/io.opentelemetry.*) which should not be mapped to\n      OpenTelemetry-Go CPEs. The\
+    \ Java and Go implementations are separate codebases with different vulnerabilities.\n\n      Suppressing: cpe:2.3:a:opentelemetry:opentelemetry:*:*:*:*:*:go:*:*\
+    \ (note the :go: platform indicator)"
+  match:
+    package-url: ^pkg:maven/io\.opentelemetry\..*@.*$
+  suppress:
+    cpes:
+    - cpe:/a:opentelemetry:opentelemetry
+- id: cpe-micrometer-registry-prometheus-jar-prometheus
+  type: cpe-correction
+  notes: "file name: micrometer-registry-prometheus-*.jar\n\n      [Issue #64] WildFly uses io.micrometer:micrometer-registry-prometheus,\
+    \ a Java metrics client\n      library, which is being incorrectly mapped to the Prometheus server CPE\n      (cpe:2.3:a:prometheus:prometheus).\
+    \ These are entirely separate projects: Micrometer is a Java\n      metrics facade (io.micrometer groupId), while the\
+    \ Prometheus server is a Go binary\n      (github.com/prometheus/prometheus). The scanner falls back to CPE-based version\
+    \ matching for\n      this jar because it has no resolved purl, causing accidental version number matches against\n  \
+    \    the Prometheus server CPE.\n\n      https://github.com/wildfly-security/wildfly-sca-scanner/issues/64"
+  match:
+    file-path: .*micrometer-registry-prometheus-.*\.jar
+  suppress:
+    cpes:
+    - cpe:/a:prometheus:prometheus
+  references:
+  - https://github.com/wildfly-security/wildfly-sca-scanner/issues/64
+- id: cpe-orgwildflysecurityjakarta-jakarta-client-resteasy-restea
+  type: cpe-correction
+  notes: 'file name: jakarta-client-resteasy-3.0.3.Final.jar'
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.security\.jakarta/jakarta\-client\-resteasy@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:resteasy
+- id: cpe-orgjboss-jboss-iiop-client-jboss-ejb-client
+  type: cpe-correction
+  notes: 'file name: jboss-iiop-client-2.0.1.Final.jar'
+  match:
+    package-url: ^pkg:maven/org\.jboss/jboss\-iiop\-client@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:jboss-ejb-client
+- id: cpe-orgwildfly-mvc-krazo-subsystem-wildfly
+  type: cpe-correction
+  notes: 'file name: mvc-krazo-subsystem-0.8.2.Final.jar'
+  match:
+    package-url: ^pkg:maven/org\.wildfly/mvc\-krazo\-subsystem@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+- id: cpe-orgwildfly-mvc-krazo-galleon-shared-wildfly
+  type: cpe-correction
+  notes: 'file name: mvc-krazo-galleon-shared-0.8.2.Final.pom'
+  match:
+    package-url: ^pkg:maven/org\.wildfly/mvc\-krazo\-galleon\-shared@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+- id: cpe-orgwildflyextrasbatavia-transformer-api-wildfly
+  type: cpe-correction
+  notes: 'file name: transformer-7.0.0.Beta2.jar (shaded: org.wildfly.extras.batavia:transformer-api:1.0.12.Final)'
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.extras\.batavia/transformer\-api@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+- id: cpe-orgwildflysecurity-wildfly-elytron-audit-linux-audit
+  type: cpe-correction
+  notes: 'file name: wildfly-elytron-audit-2.3.1.Final.jar'
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.security/wildfly\-elytron\-audit@.*$
+  suppress:
+    cpes:
+    - cpe:/a:linux_audit_project:linux_audit
+- id: cpe-orgwildflycore-wildfly-wildfly
+  type: cpe-correction
+  notes: Match all components from WildFly Core, these should use CPE redhat:wildfly-core
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.core/wildfly\-.*@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+- id: cpe-orgwildflydeployment-transformer-wildfly
+  type: cpe-correction
+  notes: "file name: transformer-7.0.0.Beta2.jar\n\n      [WFLY-19236] This component is independent of WildFly so should\
+    \ not be matched against WildFly CVEs."
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.deployment/transformer@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+- id: cpe-orgwildflydeployment-wildfly-ee-9-deployment-transformer
+  type: cpe-correction
+  notes: 'file name: wildfly-ee-9-deployment-transformer-1.0.0.Final.jar'
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.deployment/wildfly\-ee\-9\-deployment\-transformer@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+- id: cpe-orgwildflygalleon-plugins-wildfly-galleon-plugins-wildfl
+  type: cpe-correction
+  notes: 'file name: wildfly-galleon-plugins-7.0.0.Beta2.jar'
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.galleon\-plugins/wildfly\-galleon\-plugins@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+- id: cpe-orgwildflyplugins-wildfly-plugin-tools-wildfly
+  type: cpe-correction
+  notes: "file name: wildfly-plugin-tools-1.1.0.Final.jar\n\n      [WFLY-19311] wildfly-plugin-tools is an independent plugin\
+    \ so should not map to WildFly server vulnerabilities."
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.plugins/wildfly\-plugin\-tools@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+- id: cpe-orgwildflyunstableapiannotation-unstable-api-annotation-
+  type: cpe-correction
+  notes: "file name: unstable-api-annotation-classpath-indexer-1.0.0.Beta1.jar\n\n      [WFLY-19495] The unstable API artifacts\
+    \ is incorrectly mapping to WildFly CVEs."
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.unstable\.api\.annotation/unstable-api-annotation-classpath-indexer@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+- id: cpe-orgwildflyclustering-wildfly-clustering-infinispan-infin
+  type: cpe-correction
+  notes: "file name: wildfly-clustering-cache-infinispan-common-1.1.2.Final.jar\n\n      [WFLY-19762] Suppress wildfly-clustering\
+    \ mapping to infinispan CPE."
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.clustering/wildfly-clustering-.*-infinispan.*@.*$
+  suppress:
+    cpes:
+    - cpe:/a:infinispan:infinispan
+- id: cpe-orgwildflyclustering-wildfly-clustering-wildfly
+  type: cpe-correction
+  notes: "file name: wildfly-clustering-server-api-1.1.2.Final.jar\n\n      [WFLY-19762] Suppress wildfly-clustering mapping\
+    \ to redhat:wildfly CPE."
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.clustering/wildfly-clustering-.*@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+- id: cpe-orgwildflyclustering-wildfly-clustering-server-jgroups-j
+  type: cpe-correction
+  notes: "file name: wildfly-clustering-server-jgroups-1.1.2.Final.jar\n\n      [WFLY-19762] Suppress wildfly-clustering-server-jgroups\
+    \ mapping to redhat:jgroups CPE."
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.clustering/wildfly-clustering-server-jgroups@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:jgroups
+- id: cpe-orgwildflylauncher-wildfly-launcher-wildfly
+  type: cpe-correction
+  notes: "file name: wildfly-launcher-1.0.0.Final.jar\n\n      [WFLY-20135] Suppress wildfly-launcher mapping to the WildFly\
+    \ CPE as it is an independent artifact."
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.launcher/wildfly-launcher@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+- id: cpe-orgwildflyextrasvertx-wildfly-vertx-wildfly
+  type: cpe-correction
+  notes: "file name: wildfly-vertx-extension-1.0.2.Final.jar\n\n      [WFLY-20136] Suppress wildfly-vertx-* mapping to the\
+    \ WildFly CPE as it is an independent artifact."
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.extras\.vertx/wildfly-vertx-.*@.*$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+- id: cpe-jboss-cli-client-wildfly
+  type: cpe-correction
+  notes: "file name: jboss-cli-client.jar\n\n     Version information can not be derived for this jar so scip the CPE patching."
+  match:
+    file-path: ^.*/wildfly/bin/client/jboss-cli-client.jar$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+    - cpe:/a:redhat:wildfly_core
+- id: cpe-jboss-client-wildfly
+  type: cpe-correction
+  notes: "file name: jboss-client.jar\n\n     Version information can not be derived for this jar so scip the CPE patching."
+  match:
+    file-path: ^.*/wildfly/bin/client/jboss-client.jar$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+- id: cpe-wildfly-elytron-tool-wildfly
+  type: cpe-correction
+  notes: "file name: wildfly-elytron-tool.jar\n\n     Version information can not be derived for this jar so scip the CPE\
+    \ patching."
+  match:
+    file-path: ^.*/wildfly/bin/wildfly-elytron-tool.jar$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+    - cpe:/a:redhat:wildfly_core
+    - cpe:/a:redhat:wildfly_elytron
+- id: cpe-launcher-wildfly
+  type: cpe-correction
+  notes: "file name: launcher.jar\n\n     Version information can not be derived for this jar so skip the CPE patching.\n\
+    \     The launcher is an independent tool in wildfly/bin/ and should not match against WildFly Server,\n     JBoss EAP,\
+    \ AMQ, Quarkus, or other Red Hat product CVEs."
+  match:
+    file-path: ^.*/wildfly/bin/launcher.jar$
+  suppress:
+    cpes:
+    - cpe:/a:redhat:wildfly
+    - cpe:/a:redhat:wildfly_core
+    - cpe:/a:redhat:jboss_enterprise_application_platform
+    - cpe:/a:redhat:amq
+    - cpe:/a:redhat:build_of_quarkus
+    - cpe:/a:netapp:active_iq_unified_manager
+- id: cpe-orgwildfly-wildfly-elytron-oidc-client-subsystem-openid
+  type: cpe-correction
+  notes: "file name: wildfly-elytron-oidc-client-subsystem-38.0.0.Final.jar\n\n     The OIDC subsystem should not map to oidc:oidc"
+  match:
+    package-url: ^pkg:maven/org\.wildfly/wildfly-elytron-oidc-client-subsystem@.*$
+  suppress:
+    cpes:
+    - cpe:/a:openid:openid
+- id: cpe-orgapachecxf-cxf-tools-validator-validator
+  type: cpe-correction
+  notes: 'file name: cxf-tools-validator-4.0.10.jar'
+  match:
+    package-url: ^pkg:maven/org\.apache\.cxf/cxf-tools-validator@.*$
+  suppress:
+    cpes:
+    - cpe:/a:validator:validator
+- id: cpe-orghibernatevalidator-hibernate-validator-validator
+  type: cpe-correction
+  notes: 'file name: hibernate-validator-8.0.3.Final.jar'
+  match:
+    package-url: ^pkg:maven/org\.hibernate\.validator/hibernate-validator@.*$
+  suppress:
+    cpes:
+    - cpe:/a:validator:validator
+- id: cpe-orghibernatevalidator-hibernate-validator-cdi-validator
+  type: cpe-correction
+  notes: 'file name: hibernate-validator-cdi-8.0.3.Final.jar'
+  match:
+    package-url: ^pkg:maven/org\.hibernate\.validator/hibernate-validator-cdi@.*$
+  suppress:
+    cpes:
+    - cpe:/a:validator:validator
+- id: cpe-orgjbossironjacamar-ironjacamar-validator-validator
+  type: cpe-correction
+  notes: 'file name: ironjacamar-validator-3.0.18.Final.jar'
+  match:
+    package-url: ^pkg:maven/org\.jboss\.ironjacamar/ironjacamar-validator@.*$
+  suppress:
+    cpes:
+    - cpe:/a:validator:validator
+- id: cpe-orgglassfishconcurro-concurro-payara
+  type: cpe-correction
+  notes: "file name: concurro-3.1.0.jar\n\n     [Issue #83] concurro is a Jakarta EE Concurrency Utilities implementation\n\
+    \     (ManagedExecutorService, ManagedThreadFactory, etc.). It is not part of\n     Payara Server and should not be matched\
+    \ to the Payara CPE. The scanner\n     matches on the org.glassfish namespace but concurro is a standalone\n     concurrency\
+    \ library with no relationship to the Payara server product.\n\n     https://github.com/wildfly-security/wildfly-sca-scanner/issues/83"
+  match:
+    package-url: ^pkg:maven/org\.glassfish\.concurro/concurro@.*$
+  suppress:
+    cpes:
+    - cpe:/a:payara:payara
+  references:
+  - https://github.com/wildfly-security/wildfly-sca-scanner/issues/83
+- id: orgapachedirectoryserver-apacheds-cve-2010-1151
+  type: cve-triage
+  notes: 'file name: apacheds-interceptors-admin-2.0.0.AM26.jar'
+  match:
+    package-url: ^pkg:maven/org\.apache\.directory\.server/apacheds\-.*@.*$
+  suppress:
+    cves:
+    - CVE-2010-1151
+  until: '2027-10-30'
+- id: orgapachemina-mina-core-cve-2021-41973
+  type: cve-triage
+  notes: 'file name: mina-core-2.1.3.jar'
+  match:
+    package-url: ^pkg:maven/org\.apache\.mina/mina\-core@.*$
+  suppress:
+    cves:
+    - CVE-2021-41973
+  until: '2027-10-30'
+- id: comh2database-h2-cve-2018-14335
+  type: cve-triage
+  notes: 'file name: h2-2.2.224.jar'
+  match:
+    package-url: ^pkg:maven/com\.h2database/h2@.*$
+  suppress:
+    vulnerability-names:
+    - CVE-2018-14335
+  until: '2027-03-26'
+- id: orgglassfishsoteria-jakartasecurityenterprise-cve-2020-1732
+  type: cve-triage
+  notes: 'file name: jakarta.security.enterprise-3.0.3.jar'
+  match:
+    package-url: ^pkg:maven/org\.glassfish\.soteria/jakarta\.security\.enterprise@.*$
+  suppress:
+    vulnerability-names:
+    - CVE-2020-1732
+  until: '2027-03-26'
+- id: orgjgroupsaws-jgroups-aws-cve-2016-2141
+  type: cve-triage
+  notes: 'file name: jgroups-aws-3.0.0.Final.jar'
+  match:
+    package-url: ^pkg:maven/org\.jgroups\.aws/jgroups\-aws@.*$
+  suppress:
+    cves:
+    - CVE-2016-2141
+  until: '2027-10-30'
+- id: orgapachecommons-commons-compress-cve-2024-25710
+  type: cve-triage
+  notes: 'file name: commons-compress-1.24.0.jar'
+  match:
+    package-url: ^pkg:maven/org\.apache\.commons/commons\-compress@.*$
+  suppress:
+    cves:
+    - CVE-2024-25710
+    - CVE-2024-26308
+  until: '2027-10-30'
+- id: orgjbossresteasyspring-resteasy-spring-cve-2016-9606
+  type: cve-triage
+  notes: 'file name: resteasy-spring-3.0.4.Final.jar'
+  match:
+    package-url: ^pkg:maven/org\.jboss\.resteasy\.spring/resteasy\-spring@.*$
+  suppress:
+    cves:
+    - CVE-2016-9606
+    - CVE-2014-3490
+    - CVE-2020-1695
+    - CVE-2020-10688
+    - CVE-2023-0482
+    - CVE-2020-25633
+    - CVE-2021-20289
+  until: '2027-03-26'
+- id: orgjbossresteasy-resteasy-tracing-api-cve-2016-9606
+  type: cve-triage
+  notes: 'file name: resteasy-tracing-api-2.0.1.Final.jar'
+  match:
+    package-url: ^pkg:maven/org\.jboss\.resteasy/resteasy\-tracing\-api@.*$
+  suppress:
+    cves:
+    - CVE-2016-9606
+    - CVE-2020-10688
+    - CVE-2023-0482
+    - CVE-2020-25633
+    - CVE-2021-20289
+    - CVE-2011-5245
+    - CVE-2012-0818
+  until: '2027-03-26'
+- id: ioundertow-undertow-core-cve-2016-6311
+  type: cve-triage
+  notes: 'file name: undertow-core-2.3.12.Final.jar'
+  match:
+    package-url: ^pkg:maven/io\.undertow/undertow\-core@.*$
+  suppress:
+    vulnerability-names:
+    - CVE-2016-6311
+  until: '2027-03-26'
+- id: orgjbossresteasyspring-resteasy-spring-cve-2021-20293
+  type: cve-triage
+  notes: 'file name: resteasy-spring-3.0.4.Final.jar'
+  match:
+    package-url: ^pkg:maven/org\.jboss\.resteasy\.spring/resteasy\-spring@.*$
+  suppress:
+    cves:
+    - CVE-2021-20293
+  until: '2027-03-26'
+- id: orgjbossresteasy-resteasy-tracing-api-cve-2021-20293
+  type: cve-triage
+  notes: 'file name: resteasy-tracing-api-2.0.1.Final.jar'
+  match:
+    package-url: ^pkg:maven/org\.jboss\.resteasy/resteasy\-tracing\-api@.*$
+  suppress:
+    cves:
+    - CVE-2021-20293
+  until: '2027-03-26'
+- id: iovertx-vertx-kafka-client-cve-2024-8391
+  type: cve-triage
+  notes: "file name: vertx-kafka-client-4.4.9.jar\n\n      [WFLY-19764] Suppress CVE-2024-8391 mapping to vertx-kafka-client\n\
+    \      https://github.com/darranl/aphrodite/issues/34 Suppress CVE-2025-11965 and CVE-2025-11966"
+  match:
+    package-url: ^pkg:maven/io\.vertx/vertx-kafka-client@.*$
+  suppress:
+    cves:
+    - CVE-2024-8391
+    - CVE-2025-11965
+    - CVE-2025-11966
+  until: '2027-01-30'
+  references:
+  - https://github.com/darranl/aphrodite/issues/34 Suppress CVE-2025-11965 and CVE-2025-11966
+- id: orgapachemina-mina-core-cve-2024-52046
+  type: cve-triage
+  notes: "file name: mina-core-2.1.3.jar\n\n      [WFLY-20234] Suppress CVE-2024-52046 as mina-core is a test dependency only."
+  match:
+    package-url: ^pkg:maven/org\.apache\.mina/mina-core@.*$
+  suppress:
+    vulnerability-names:
+    - CVE-2024-52046
+  until: '2027-10-30'
+- id: orgjbosshal-hal-console-cve-2025-2901
+  type: cve-triage
+  notes: "file name: hal-console-3.7.12.Final-resources.jar\n\n      [WFLY-20706] This was a generalisation of two previously\
+    \ fixed CVEs \"CVE-2025-23366 and CVE-2024-10234\" and so can be ignored as a duplicate."
+  match:
+    package-url: ^pkg:maven/org\.jboss\.hal/hal-console@.*$
+  suppress:
+    vulnerability-names:
+    - CVE-2025-2901
+  until: '2027-10-30'
+- id: orgeclipsejgit-orgeclipsejgit-cve-2025-4949
+  type: cve-triage
+  notes: "file name: org.eclipse.jgit-6.10.1.202505221210-r.jar\n\n      [WFLY-20741] This CVE is fixed in version 6.10.1\n\
+    \n      https://projects.eclipse.org/projects/technology.jgit/releases/6.10.1"
+  match:
+    package-url: ^pkg:maven/org\.eclipse\.jgit/org\.eclipse\.jgit.*@6\.10\.1.*$
+  suppress:
+    cves:
+    - CVE-2025-4949
+  references:
+  - https://projects.eclipse.org/projects/technology.jgit/releases/6.10.1
+- id: orgwildfly-cve-2022-0866
+  type: cve-triage
+  notes: "file name: jipijapa-hibernate6-38.0.0.Final.jar\n\n      This was fixed in WildFly 26.1.1.Final and 27.0.0.Final\
+    \ WFLY-15998."
+  match:
+    package-url: ^pkg:maven/org\.wildfly/.*@.*$
+  suppress:
+    cves:
+    - CVE-2022-0866
+- id: orgelasticsearchclient-elasticsearch-rest-client-cve-2024-52
+  type: cve-triage
+  notes: "file name: elasticsearch-rest-client-8.15.4.jar\n\n     [WFLY-21079] These CVEs are about the Elasticsearch server,\
+    \ not the client library we depend on.\n     \n     - CVE-2024-52979, CVE-2025-37731, CVE-2025-68384, CVE-2025-37727,\
+    \ CVE-2025-68390: Server-side issues\n     - CVE-2026-56148: Uncontrolled recursion in query processing (server-side)\n\
+    \     - CVE-2026-56149: ML request resource exhaustion (server-side, requires ML features)\n     \n     The elasticsearch-rest-client\
+    \ is an HTTP client library for communicating with Elasticsearch servers.\n     It does not process queries, handle ML\
+    \ requests, or implement server-side logic.\n     \n     https://github.com/darranl/aphrodite/issues/26"
+  match:
+    package-url: ^pkg:maven/org\.elasticsearch\.client/elasticsearch-rest-client.*@.*$
+  suppress:
+    cves:
+    - CVE-2024-52979
+    - CVE-2025-37731
+    - CVE-2025-68384
+    - CVE-2025-37727
+    - CVE-2025-68390
+    - CVE-2026-56148
+    - CVE-2026-56149
+  until: '2027-01-23'
+  references:
+  - https://github.com/darranl/aphrodite/issues/26
+- id: orgeclipseangus-angus-activation-cve-2025-7962
+  type: cve-triage
+  notes: "file name: angus-activation-2.0.3.jar\n\n     https://github.com/darranl/aphrodite/issues/18 SMTPTransport is not\
+    \ a part of angus-activation."
+  match:
+    package-url: ^pkg:maven/org\.eclipse\.angus/angus-activation@.*$
+  suppress:
+    cves:
+    - CVE-2025-7962
+  until: '2026-11-28'
+  references:
+  - https://github.com/darranl/aphrodite/issues/18 SMTPTransport is not a part of angus-activation.
+- id: io-micrometer-main-micrometer-registry-cve-2019-3826
+  type: cve-triage
+  notes: "Suppressing false positive for micrometer-registry-prometheus in Wildfly modules.\n    The scanner is misidentifying\
+    \ this JAR or attributing unrelated CVEs.\n\n    The identified CVE is in relation to the Prometheus server not this jar:\n\
+    \      https://github.com/darranl/aphrodite/issues/20\n      https://github.com/darranl/aphrodite/issues/28"
+  match:
+    file-path: .*io/micrometer/main/micrometer-registry-prometheus-.*\.jar
+  suppress:
+    cves:
+    - CVE-2019-3826
+  until: '2027-01-23'
+  references:
+  - https://github.com/darranl/aphrodite/issues/20
+  - https://github.com/darranl/aphrodite/issues/28
+- id: orgapachelogginglog4j-log4j-api-cve-2025-68161
+  type: cve-triage
+  notes: "file name: log4j-api-2.23.1.jar\n\n    This CVE only affects the implementation and does not affect log4j-api.\n\
+    \      https://github.com/darranl/aphrodite/issues/30"
+  match:
+    package-url: ^pkg:maven/org\.apache\.logging\.log4j/log4j-api@.*$
+  suppress:
+    cves:
+    - CVE-2025-68161
+  references:
+  - https://github.com/darranl/aphrodite/issues/30
+- id: orgwildflycore-cve-2025-23368
+  type: cve-triage
+  notes: "file name: launcher.jar\n\n    [WFCORE-7192] Fixed in WildFly Core 32.0.0.Beta3 and 31.0.3.Final.\n    WildFly main\
+    \ is on 32.0.0.Beta7+.\n\n    https://github.com/wildfly-security/wildfly-sca-scanner/issues/46\n    https://github.com/wildfly/wildfly-core/security/advisories/GHSA-qhp6-6p8p-2rqh"
+  match:
+    package-url: ^pkg:maven/org\.wildfly\.core/.*@.*$
+  suppress:
+    cves:
+    - CVE-2025-23368
+  references:
+  - https://github.com/wildfly-security/wildfly-sca-scanner/issues/46
+  - https://github.com/wildfly/wildfly-core/security/advisories/GHSA-qhp6-6p8p-2rqh
+- id: orgapachelogginglog4j-log4j-api-cve-2026-34478
+  type: cve-triage
+  notes: "file name: log4j-api-2.23.1.jar\n\n    [Issue #59] WildFly only includes log4j-api (the API layer), not the affected\
+    \ implementation components.\n    - CVE-2026-34478: Log injection in Rfc5424Layout (affects log4j-core only)\n    - CVE-2026-34480:\
+    \ Silent log event loss in XmlLayout (affects log4j-core only)\n    - CVE-2026-34481: Invalid JSON from JsonTemplateLayout\
+    \ (affects log4j-layout-template-json only)\n\n    WildFly does not use log4j-core or log4j-layout-template-json, therefore\
+    \ these vulnerabilities\n    do not affect WildFly installations.\n\n    https://github.com/wildfly-security/wildfly-sca-scanner/issues/59"
+  match:
+    package-url: ^pkg:maven/org\.apache\.logging\.log4j/log4j-api@.*$
+  suppress:
+    cves:
+    - CVE-2026-34478
+    - CVE-2026-34480
+    - CVE-2026-34481
+  until: '2027-05-01'
+  references:
+  - https://github.com/wildfly-security/wildfly-sca-scanner/issues/59
+- id: orgapachelogginglog4j-log4j-api-cve-2026-34479
+  type: cve-triage
+  notes: "file name: log4j-api-2.23.1.jar\n\n    [Issue #63] WildFly only includes log4j-api (the API layer), not the affected\
+    \ implementation components.\n    - CVE-2026-34479: Silent log event loss in Log4j1XmlLayout (affects log4j-1.2-api only)\n\
+    \    - CVE-2026-34477: verifyHostName attribute silently ignored in TLS config (affects log4j-core only)\n\n    WildFly\
+    \ does not use log4j-1.2-api or log4j-core, therefore these vulnerabilities\n    do not affect WildFly installations.\n\
+    \n    https://github.com/wildfly-security/wildfly-sca-scanner/issues/63"
+  match:
+    package-url: ^pkg:maven/org\.apache\.logging\.log4j/log4j-api@.*$
+  suppress:
+    cves:
+    - CVE-2026-34479
+    - CVE-2026-34477
+  until: '2027-05-20'
+  references:
+  - https://github.com/wildfly-security/wildfly-sca-scanner/issues/63
+- id: comsunxmlbindexternal-relaxng-datatyperngom-cve-2024-9329
+  type: cve-triage
+  notes: "file names: relaxng-datatype-4.0.8.jar, rngom-4.0.8.jar\n\n    [Issue #65] [Issue #70] These are JAXB XML schema\
+    \ parsing libraries (com.sun.xml.bind.external groupId)\n    being incorrectly matched to the Eclipse GlassFish application\
+    \ server CPE due to two coinciding\n    factors: (a) shared GlassFish/JAXB-RI project heritage causing the scanner to\
+    \ assign\n    cpe:2.3:a:eclipse:glassfish via the parent groupId org.glassfish.jaxb, and (b) version number\n    coincidence\
+    \ (library v4.0.8 vs. GlassFish application server 4.0.8).\n\n    These libraries are pure XML parsing components with\
+    \ no HTTP server, admin console, or EL\n    evaluation functionality. The actually vulnerable components are exclusively\
+    \ in the GlassFish\n    Administration Console (org.glassfish.main.admingui:console-common), which is not present\n  \
+    \  in WildFly:\n    - CVE-2024-9329: open redirect in the GlassFish /management/domain HTTP management endpoint\n    -\
+    \ CVE-2026-2586: authenticated RCE via crafted requests to the GlassFish admin console\n    - CVE-2026-2587: unauthenticated\
+    \ EL injection via the GlassFish gadget handler (gadget.jsf)\n\n    https://github.com/wildfly-security/wildfly-sca-scanner/issues/65\n\
+    \    https://github.com/wildfly-security/wildfly-sca-scanner/issues/70"
+  match:
+    package-url: ^pkg:maven/com\.sun\.xml\.bind\.external/(relaxng-datatype|rngom)@.*$
+  suppress:
+    cves:
+    - CVE-2024-9329
+    - CVE-2026-2586
+    - CVE-2026-2587
+  until: '2027-06-08'
+  references:
+  - https://github.com/wildfly-security/wildfly-sca-scanner/issues/65
+  - https://github.com/wildfly-security/wildfly-sca-scanner/issues/70
+- id: ionetty-netty-codec-http3-cve-2026-42582
+  type: cve-triage
+  notes: "file name: netty-*.jar\n\n    [Issue #66] CVE-2026-42582 affects only io.netty:netty-codec-http3 (the HTTP/3 QPACK\
+    \ decoder),\n    which exists only in the Netty 4.2.x branch. WildFly ships Netty 4.1.x and netty-codec-http3\n    is\
+    \ entirely absent from the distribution. The scanner attributes the CVE to all Netty jars at\n    version 4.1.133.Final\
+    \ because NVD CPEs are product-level, not module-level.\n\n    The packageUrl regex explicitly excludes netty-codec-http3\
+    \ so that if WildFly ever adds HTTP/3\n    support this suppression will not hide a real finding.\n\n    https://github.com/wildfly-security/wildfly-sca-scanner/issues/66"
+  match:
+    package-url: ^pkg:maven/io\.netty/(?!netty-codec-http3).*@.*$
+  suppress:
+    cves:
+    - CVE-2026-42582
+  until: '2027-05-20'
+  references:
+  - https://github.com/wildfly-security/wildfly-sca-scanner/issues/66
+- id: wildfly-bin-client-jboss-client-jar-cve-2026-42582
+  type: cve-triage
+  notes: "file name: jboss-client.jar\n\n    [Issue #66] jboss-client.jar shades netty-transport-native-epoll:4.1.133.Final.\
+    \ CVE-2026-42582\n    affects only netty-codec-http3 (4.2.x only), which is not present in WildFly. Suppressed via\n \
+    \   filePath as the shaded jar has no resolvable purl for the embedded Netty dependency.\n\n    https://github.com/wildfly-security/wildfly-sca-scanner/issues/66"
+  match:
+    file-path: ^.*/wildfly/bin/client/jboss-client\.jar$
+  suppress:
+    cves:
+    - CVE-2026-42582
+  until: '2027-05-20'
+  references:
+  - https://github.com/wildfly-security/wildfly-sca-scanner/issues/66
+- id: orgapachecxf-cve-2026-44930
+  type: cve-triage
+  notes: "file names: cxf-core-4.0.11.jar, cxf-rt-databinding-aegis-4.0.11.jar,\n    cxf-rt-features-clustering-4.0.11.jar,\
+    \ cxf-rt-ws-security-4.0.11.jar,\n    cxf-services-sts-core-4.0.11.jar, cxf-tools-wsdlto-core-4.0.11.jar\n\n    [Issue\
+    \ #68] These CVEs affect CXF sub-modules that are not present in WildFly:\n    - CVE-2026-44930: LDAP injection in the\
+    \ LDAP Certificate repository of the CXF XKMS server\n      (cxf-services-xkms-* modules). WildFly does not ship the CXF\
+    \ XKMS server.\n    - CVE-2026-44618: Insecure XML parser configuration in CXF's WS-Transfer module\n      (cxf-rt-ws-transfer).\
+    \ WildFly does not ship the CXF WS-Transfer module.\n\n    The scanner attributes these CVEs to all CXF jars at version\
+    \ 4.0.11 via a product-level\n    match, but the actually vulnerable components are absent from the WildFly distribution.\n\
+    \n    https://github.com/wildfly-security/wildfly-sca-scanner/issues/68"
+  match:
+    package-url: ^pkg:maven/org\.apache\.cxf[^/]*/.*@.*$
+  suppress:
+    cves:
+    - CVE-2026-44930
+    - CVE-2026-44618
+  until: '2027-06-08'
+  references:
+  - https://github.com/wildfly-security/wildfly-sca-scanner/issues/68
+- id: orgapacheactivemq-activemq-artemis-native-cve-2017-12174
+  type: cve-triage
+  notes: "file name: activemq-artemis-native-2.0.0.jar\n\n    [Issue #72] This jar is a JNI wrapper for Linux libaio, maintained\
+    \ in a separate repository\n    with independent versioning (currently 2.0.0). The OWASP scanner incorrectly matches Artemis\n\
+    \    broker CVEs to this jar because they share the org.apache.activemq groupId. None of these CVEs\n    affect the native\
+    \ libaio wrapper:\n    - CVE-2017-12174: Artemis broker DoS via large message\n    - CVE-2021-26117: LDAP login module\
+    \ authentication bypass in ActiveMQ (classic 5.x)\n    - CVE-2021-4040: AMQP message parsing flaw in Artemis broker\n\
+    \    - CVE-2022-23913: Artemis broker DoS via unvalidated user frames\n    - CVE-2022-35278: Artemis web console HTML\
+    \ injection\n    - CVE-2023-50780: Artemis broker user enumeration\n    - CVE-2025-27391: Artemis broker deserialization\
+    \ gadget chain\n    - CVE-2025-27427: Artemis broker OpenWire resource exhaustion\n    - CVE-2026-32642: Artemis broker\
+    \ incorrect exception handling in AMQP protocol manager\n\n    https://github.com/wildfly-security/wildfly-sca-scanner/issues/72"
+  match:
+    package-url: ^pkg:maven/org\.apache\.activemq/activemq\-artemis\-native@.*$
+  suppress:
+    cves:
+    - CVE-2017-12174
+    - CVE-2021-26117
+    - CVE-2021-4040
+    - CVE-2022-23913
+    - CVE-2022-35278
+    - CVE-2023-50780
+    - CVE-2025-27391
+    - CVE-2025-27427
+    - CVE-2026-32642
+  until: '2027-06-22'
+  references:
+  - https://github.com/wildfly-security/wildfly-sca-scanner/issues/72
+- id: orgapachehttpcomponents-httpcore-nio-cve-2026-54399
+  type: cve-triage
+  notes: "file name: httpcore-4.4.16.jar, httpcore-nio-4.4.16.jar\n\n    [WFLY-22073] CVE-2026-54399 and CVE-2026-54428 affect\
+    \ Apache HttpComponents Core 5.x only\n    (specifically 5.0-alpha through 5.4.2 and 5.5-alpha through 5.5-beta1). WildFly\
+    \ ships\n    httpcore 4.4.16 from the 4.x branch, which is not affected by these vulnerabilities.\n    \n    - CVE-2026-54399:\
+    \ HTTP/1.1 message parser DoS via excessive headers/header length\n    - CVE-2026-54428: HTTP/2 HPACK decoder DoS via\
+    \ oversized compressed header blocks\n    \n    The 4.x and 5.x branches are separate codebases with different vulnerabilities."
+  match:
+    package-url: ^pkg:maven/org\.apache\.httpcomponents/httpcore(-nio)?@4\..*$
+  suppress:
+    cves:
+    - CVE-2026-54399
+    - CVE-2026-54428
+  until: '2027-07-14'
+- id: orgapachekafka-kafka-clients-cve-2026-41115
+  type: cve-triage
+  notes: "file name: kafka-clients-4.2.1.jar\n\n    [WFLY-22072] CVE-2026-41115 is an improper authorization issue in Apache\
+    \ Kafka's\n    CONSUMER_GROUP_DESCRIBE API. This is primarily a documentation/configuration issue\n    rather than a code\
+    \ vulnerability. The implementation validates DESCRIBE permission\n    (which is correct), but documentation originally\
+    \ stated it should validate READ\n    permission. Apache's resolution is to update documentation to match implementation.\n\
+    \    \n    CVSS: 4.3 MEDIUM (low severity, information disclosure only)\n    Impact: Users with DESCRIBE permission can\
+    \ access consumer group metadata\n    \n    This affects Kafka server operations and ACL configuration, not the kafka-clients\n\
+    \    library functionality that WildFly depends on. The fix will be in Kafka 4.3.1+."
+  match:
+    package-url: ^pkg:maven/org\.apache\.kafka/kafka-clients@.*$
+  suppress:
+    cves:
+    - CVE-2026-41115
+  until: '2027-07-14'

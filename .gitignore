@@ -10,4 +10,5 @@ galleon.zip
 owasp-database
 unzip.log
 wildfly
+__pycache__/
 .claude
