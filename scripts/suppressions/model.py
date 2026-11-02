@@ -16,6 +16,7 @@ See also:
 
 import re
 from dataclasses import dataclass, field
+from datetime import date
 from typing import Optional
 
 # Matches exact group/artifact OWASP DC regex patterns like: ^pkg:maven/group\.name/artifact-name@.*$
@@ -28,6 +29,13 @@ SIMPLE_PURL_RE = re.compile(
     r"([a-zA-Z0-9_.\\-]+)"    # artifact (exact, no wildcards)
     r"@\.\*\$?$"              # @.* (match all versions)
 )
+
+
+def purl_from_simple_match(m):
+    """Extract a plain PURL from a SIMPLE_PURL_RE match, unescaping regex characters."""
+    group = m.group(1).replace("\\.", ".").replace("\\-", "-")
+    artifact = m.group(2).replace("\\.", ".").replace("\\-", "-")
+    return f"pkg:maven/{group}/{artifact}"
 
 
 @dataclass
@@ -82,6 +90,9 @@ class Suppression:
         """
         match = d.get("match") or {}
         suppress = d.get("suppress") or {}
+        until = d.get("until")
+        if isinstance(until, date):
+            until = until.isoformat()
         return cls(
             id=d.get("id", ""),
             type=d.get("type", ""),
@@ -90,7 +101,7 @@ class Suppression:
             file_path=match.get("file-path"),
             cves=suppress.get("cves", []),
             cpes=suppress.get("cpes", []),
-            until=d.get("until"),
+            until=until,
             references=d.get("references", []),
             vulnerability_names=suppress.get("vulnerability-names", []),
         )

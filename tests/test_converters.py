@@ -769,6 +769,33 @@ class TestValidation:
         finally:
             Path(path).unlink(missing_ok=True)
 
+    def test_null_match_and_suppress_handled(self):
+        """Validator must not crash when match or suppress is explicitly null."""
+        from validate import validate
+
+        data = {
+            "version": "1.0",
+            "suppressions": [
+                {
+                    "id": "null-blocks",
+                    "type": "cve-triage",
+                    "notes": "Test",
+                    "match": None,
+                    "suppress": None,
+                },
+            ],
+        }
+        with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w", delete=False) as f:
+            yaml.dump(data, f, default_flow_style=False, sort_keys=False)
+            path = f.name
+
+        try:
+            errors, warnings = validate(path)
+            assert any("package-url" in e or "file-path" in e for e in errors)
+            assert any("suppress" in e.lower() for e in errors)
+        finally:
+            Path(path).unlink(missing_ok=True)
+
     def test_non_list_suppressions_reports_error(self):
         from validate import validate
 

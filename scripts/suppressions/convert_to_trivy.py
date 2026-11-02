@@ -27,7 +27,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
-from model import Suppression, SIMPLE_PURL_RE
+from model import Suppression, SIMPLE_PURL_RE, purl_from_simple_match
 
 
 def _regex_to_purl(pattern):
@@ -44,9 +44,7 @@ def _regex_to_purl(pattern):
     """
     m = SIMPLE_PURL_RE.match(pattern)
     if m:
-        group = m.group(1).replace("\\.", ".").replace("\\-", "-")
-        artifact = m.group(2).replace("\\.", ".").replace("\\-", "-")
-        return f"pkg:maven/{group}/{artifact}", True
+        return purl_from_simple_match(m), True
 
     # Try to extract at least a group-level PURL for wildcard patterns
     # e.g., ^pkg:maven/org\.wildfly\.core/.*@.*$ → pkg:maven/org.wildfly.core

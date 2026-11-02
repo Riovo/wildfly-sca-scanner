@@ -72,7 +72,7 @@ def validate(input_path):
         if sup_type not in ("cpe-correction", "cve-triage"):
             errors.append(f"{prefix} ({sup_id}): invalid type '{sup_type}' (expected 'cpe-correction' or 'cve-triage')")
 
-        match = entry.get("match", {})
+        match = entry.get("match") or {}
         if not match.get("package-url") and not match.get("file-path"):
             errors.append(f"{prefix} ({sup_id}): must have at least one of 'package-url' or 'file-path' in match")
 
@@ -87,7 +87,7 @@ def validate(input_path):
                 except re.error as e:
                     errors.append(f"{prefix} ({sup_id}): invalid regex in match.{key}: {e}")
 
-        suppress = entry.get("suppress", {})
+        suppress = entry.get("suppress") or {}
         if not suppress.get("cves") and not suppress.get("cpes") and not suppress.get("vulnerability-names"):
             errors.append(f"{prefix} ({sup_id}): must suppress at least one CVE, vulnerability-name, or CPE")
 

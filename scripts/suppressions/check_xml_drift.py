@@ -60,8 +60,9 @@ def _extract_signatures(yaml_path):
         data = yaml.safe_load(f)
     entries = []
     for s in sorted(data["suppressions"], key=lambda x: x["id"]):
+        suppress = s.get("suppress") or {}
         cves = sorted(
-            s["suppress"].get("cves", []) + s["suppress"].get("vulnerability-names", [])
+            suppress.get("cves", []) + suppress.get("vulnerability-names", [])
         )
         entries.append((s["id"], cves))
     return entries

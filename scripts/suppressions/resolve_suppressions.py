@@ -35,7 +35,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
-from model import Suppression, SIMPLE_PURL_RE
+from model import Suppression, SIMPLE_PURL_RE, purl_from_simple_match
 
 
 def _strip_version(purl):
@@ -152,9 +152,7 @@ def resolve(canonical_yaml_path, trivy_json_path, output_path):
         # Fast path: exact group/artifact patterns don't need scan data
         m = SIMPLE_PURL_RE.match(s.package_url)
         if m:
-            group = m.group(1).replace("\\.", ".").replace("\\-", "-")
-            artifact = m.group(2).replace("\\.", ".").replace("\\-", "-")
-            purl = f"pkg:maven/{group}/{artifact}"
+            purl = purl_from_simple_match(m)
             exact_count += 1
 
             for cve in all_cve_ids:

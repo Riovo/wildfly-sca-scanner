@@ -162,3 +162,18 @@ class TestSuppressionFromDict:
         assert s.file_path is None
         assert s.cves == []
         assert s.cpes == []
+
+    def test_datetime_date_until_coerced_to_string(self):
+        """PyYAML parses unquoted dates as datetime.date — from_dict must coerce to str."""
+        from datetime import date
+        d = {
+            "id": "date-coerce",
+            "type": "cve-triage",
+            "notes": "Test",
+            "match": {"package-url": "^pkg:maven/a/b@.*$"},
+            "suppress": {"cves": ["CVE-2024-00001"]},
+            "until": date(2027, 3, 26),
+        }
+        s = Suppression.from_dict(d)
+        assert s.until == "2027-03-26"
+        assert isinstance(s.until, str)

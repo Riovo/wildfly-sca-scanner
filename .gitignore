@@ -11,4 +11,5 @@ owasp-database
 unzip.log
 wildfly
 __pycache__/
+.trivyignore-resolved.yaml
 .claude
