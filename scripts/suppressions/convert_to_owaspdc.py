@@ -1,5 +1,18 @@
 #!/usr/bin/env python3
-"""Convert canonical YAML suppressions back to OWASP Dependency Check XML format."""
+"""Convert canonical YAML → OWASP Dependency Check XML format.
+
+Generates the roundtrip XML (owasp-suppressions/owasp-suppressions-roundtrip.xml) and is
+used by CI validation to verify that the canonical YAML and original OWASP DC XML haven't
+drifted apart. The XML preserves all information losslessly — OWASP DC uses every field
+(packageUrl, filePath, cve, vulnerabilityName, cpe, until, notes).
+
+This is the reverse of migrate_from_owaspdc.py. Together they form a round-trip:
+    XML → migrate → YAML → convert_to_owaspdc → XML (should match original)
+
+See also:
+    - migrate_from_owaspdc.py: the forward direction (XML → YAML)
+    - validate-suppressions.yaml: CI workflow that runs the drift check
+"""
 
 import re
 import sys
@@ -23,12 +36,20 @@ def _escape_xml(text):
 
 
 def _escape_cdata(text):
-    """Escape text for use inside CDATA sections by splitting on ]]>."""
+    """Escape text for use inside CDATA sections.
+
+    CDATA sections cannot contain the literal ']]>' — the XML spec requires splitting
+    the section at that point: close the current CDATA, emit '>' as text, reopen CDATA.
+    """
     return text.replace("]]>", "]]]]><![CDATA[>")
 
 
 def _build_suppress_xml(s):
-    """Build a single <suppress> element as a string with proper CDATA wrapping."""
+    """Build a single <suppress> element as a string.
+
+    Element ordering (notes, packageUrl, filePath, cve, vulnerabilityName, cpe) follows
+    OWASP DC conventions for consistency with the original hand-maintained XML.
+    """
     parts = []
 
     attr = ""

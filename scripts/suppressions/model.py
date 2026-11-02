@@ -1,5 +1,33 @@
+"""Shared data model for the suppression system.
+
+The Suppression dataclass maps 1:1 to entries in the canonical suppressions/suppressions.yaml.
+All scripts (migration, conversion, validation, resolution) operate on Suppression objects,
+keeping the YAML schema in one place.
+
+SIMPLE_PURL_RE is also defined here because both the static converter (convert_to_trivy.py)
+and the scan-time resolver (resolve_suppressions.py) need to distinguish exact group/artifact
+patterns from wildcards that require regex resolution.
+
+See also:
+    - suppressions/suppressions.yaml: the canonical file whose entries this dataclass represents
+    - migrate_from_owaspdc.py: creates Suppression objects from OWASP DC XML
+    - convert_to_trivy.py, convert_to_owaspdc.py: consume Suppression objects for output
+"""
+
+import re
 from dataclasses import dataclass, field
 from typing import Optional
+
+# Matches exact group/artifact OWASP DC regex patterns like: ^pkg:maven/group\.name/artifact-name@.*$
+# Used by both convert_to_trivy.py (static) and resolve_suppressions.py (scan-time) to distinguish
+# patterns that map cleanly to a single PURL from those requiring regex resolution.
+SIMPLE_PURL_RE = re.compile(
+    r"^\^?pkg:maven/"
+    r"([a-zA-Z0-9_.\\-]+)"    # group (may have escaped dots/hyphens)
+    r"/"
+    r"([a-zA-Z0-9_.\\-]+)"    # artifact (exact, no wildcards)
+    r"@\.\*\$?$"              # @.* (match all versions)
+)
 
 
 @dataclass
@@ -16,6 +44,10 @@ class Suppression:
     vulnerability_names: list = field(default_factory=list)
 
     def to_dict(self):
+        """Serialize to the canonical YAML structure with match/suppress nesting.
+
+        Empty lists are omitted so the YAML stays clean and readable.
+        """
         d = {"id": self.id, "type": self.type, "notes": self.notes}
 
         match = {}
@@ -43,6 +75,11 @@ class Suppression:
 
     @classmethod
     def from_dict(cls, d):
+        """Deserialize from canonical YAML dict.
+
+        The `or {}` guards handle None match/suppress blocks that can appear in
+        malformed or minimal YAML entries without crashing on .get() calls.
+        """
         match = d.get("match") or {}
         suppress = d.get("suppress") or {}
         return cls(

@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
-"""Tests for the Trivy and OWASP DC converters."""
+"""Tests for the Trivy and OWASP DC converters, plus the canonical YAML validator.
+
+Each converter translates the canonical YAML into a scanner-specific format:
+  - Trivy: .trivyignore.yaml with PURL-scoped CVE entries
+  - OWASP DC: XML with CDATA-wrapped notes and namespace-qualified elements
+
+The validator checks the canonical YAML for schema errors (missing fields, invalid regex,
+duplicate IDs) and warnings (expired until dates). CI runs it on every push to suppressions/.
+
+See also: test_resolver.py for scan-time PURL resolution tests.
+"""
 
 import tempfile
 from pathlib import Path
@@ -21,6 +31,12 @@ def write_yaml(data, path):
 
 
 class TestTrivyConverter:
+    """Tests for the static Trivy converter (convert_to_trivy.py).
+
+    This converter runs at commit time and generates suppressions/.trivyignore.yaml.
+    Wildcard patterns become global suppressions here (no purls field) — the scan-time
+    resolver (resolve_suppressions.py) eliminates those by matching against real PURLs.
+    """
     def test_cpe_only_suppressions_skipped(self):
         data = {
             "version": "1.0",
@@ -331,6 +347,11 @@ class TestTrivyConverter:
 
 
 class TestOWASPDCConverter:
+    """Tests for the OWASP DC XML converter (convert_to_owaspdc.py).
+
+    Generates owasp-suppressions-roundtrip.xml from canonical YAML. The output must be
+    valid XML with proper CDATA escaping and namespace-qualified elements.
+    """
     def test_cdata_wrapping(self):
         """Notes should be wrapped in CDATA to handle XML special characters."""
         data = {
@@ -549,6 +570,11 @@ class TestOWASPDCConverter:
 
 
 class TestValidation:
+    """Tests for the canonical YAML schema validator (validate.py).
+
+    The validator runs in CI on every push to suppressions/ and checks for structural
+    errors (missing fields, invalid regex, duplicate IDs) and warnings (expired dates).
+    """
     def test_empty_file(self):
         from validate import validate
 

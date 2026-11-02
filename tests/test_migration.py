@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""Tests for the OWASP DC XML → canonical YAML migration script."""
+"""Tests for the OWASP DC XML to canonical YAML migration.
+
+Covers three areas:
+  - XML element parsing: individual <suppress> elements into Suppression objects
+  - ID deduplication: ensuring generated IDs are unique even with collisions
+  - Full migration: running against the real owasp-suppressions.xml and verifying
+    counts, uniqueness, and that complex patterns (negative lookahead, filePath) survive
+"""
 
 import tempfile
 from pathlib import Path
@@ -15,16 +22,19 @@ NS_URI = "https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.
 
 
 def make_xml(inner_xml):
+    """Wrap a <suppress> fragment in the required root element for parsing."""
     return f'<suppressions xmlns="{NS_URI}">{inner_xml}</suppressions>'
 
 
 def parse_single(xml_str):
+    """Parse a single <suppress> XML fragment into a Suppression object."""
     root = ET.fromstring(make_xml(xml_str))
     elem = root.find("dc:suppress", NS)
     return parse_suppress_element(elem)
 
 
 class TestParseSuppress:
+    """Test parsing individual <suppress> XML elements into Suppression objects."""
     def test_cpe_correction(self):
         s = parse_single("""
         <suppress>
@@ -161,6 +171,7 @@ class TestParseSuppress:
 
 
 class TestDeduplicateIds:
+    """Test ID collision resolution when multiple suppressions generate the same slug."""
     def test_no_duplicates(self):
         suppressions = [
             Suppression(id="a", type="cpe-correction", notes=""),
@@ -197,6 +208,7 @@ class TestDeduplicateIds:
 
 
 class TestFullMigration:
+    """Run migration against the real owasp-suppressions.xml and verify output integrity."""
     def test_migrate_real_file(self):
         """Test migration of the actual OWASP DC suppression file."""
         input_path = Path(__file__).parent.parent / "owasp-suppressions" / "owasp-suppressions.xml"

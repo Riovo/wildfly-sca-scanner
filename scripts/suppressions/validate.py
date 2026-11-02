@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
-"""Validate canonical YAML suppression file for schema correctness and consistency."""
+"""Validate suppressions/suppressions.yaml for schema correctness and consistency.
+
+Run by CI on every push that touches suppressions/ (see .github/workflows/validate-suppressions.yaml).
+Catches: missing required fields, invalid regex syntax, duplicate IDs, expired until dates, and
+type mismatches. Returns errors (block merge) and warnings (informational, e.g. expired dates).
+
+See also:
+    - validate-suppressions.yaml: CI workflow that calls this script
+    - model.py: Suppression dataclass this validates against
+"""
 
 import re
 import sys
@@ -11,6 +20,8 @@ import yaml
 sys.path.insert(0, str(Path(__file__).parent))
 from model import Suppression
 
+# Standard CVE ID format (CVE-YYYY-NNNNN). Used to warn about non-standard IDs
+# in the vulnerability-names field, which OWASP DC accepts as free-text.
 CVE_PATTERN = re.compile(r"^CVE-\d{4}-\d{4,}$")
 
 
@@ -84,6 +95,9 @@ def validate(input_path):
             if not CVE_PATTERN.match(cve):
                 warnings.append(f"{prefix} ({sup_id}): CVE '{cve}' doesn't match expected format CVE-YYYY-NNNNN")
 
+        # Until date validation: type check → format check → parse check → expiry check.
+        # Expired dates are warnings, not errors — the suppression may still be valid
+        # pending re-evaluation by the security team.
         until = entry.get("until")
         if until:
             if not isinstance(until, str):

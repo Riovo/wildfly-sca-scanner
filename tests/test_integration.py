@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-"""Integration tests: full pipeline from OWASP DC XML → canonical YAML → converters → round-trip."""
+"""End-to-end integration tests running the full pipeline against real suppression files.
+
+Tests the complete chain: OWASP DC XML migration → canonical YAML validation → Trivy
+conversion → OWASP DC round-trip. Verifies structural correctness, suppression counts,
+date formats, CDATA survival, and lossless round-trip fidelity.
+
+All tests operate on real files (owasp-suppressions.xml, suppressions.yaml) and skip
+gracefully if those files aren't available.
+"""
 
 import tempfile
 from pathlib import Path
@@ -22,7 +30,11 @@ REAL_YAML = Path(__file__).parent.parent / "suppressions" / "suppressions.yaml"
 
 
 class TestFullPipeline:
-    """End-to-end: XML → YAML → validate → Trivy → OWASP DC round-trip."""
+    """Run the complete pipeline (migrate → convert → round-trip) and verify each output.
+
+    The pipeline_outputs fixture runs once and all tests share its results, so individual
+    tests can check specific properties without re-running the pipeline.
+    """
 
     @pytest.fixture
     def pipeline_outputs(self, tmp_path):
@@ -164,7 +176,11 @@ class TestFullPipeline:
 
 
 class TestRoundTripFidelity:
-    """Verify that specific entries survive the full round-trip correctly."""
+    """Compare original XML elements against round-tripped XML to verify lossless conversion.
+
+    Checks that all CVEs, vulnerability-names, CPEs, and until dates survive the
+    XML → YAML → XML round-trip without any additions, losses, or modifications.
+    """
 
     @pytest.fixture
     def round_trip_data(self, tmp_path):
@@ -255,7 +271,12 @@ class TestRoundTripFidelity:
 
 
 class TestEdgeCaseXML:
-    """Test migration with hand-crafted edge-case XML."""
+    """Test migration with hand-crafted XML fragments for edge cases the real file may not cover.
+
+    Each test builds a minimal XML document with one specific edge case (empty notes,
+    negative lookahead regex, special characters, filePath-only matching) and verifies
+    correct handling through the full migration → conversion pipeline.
+    """
 
     def _make_xml(self, suppress_body):
         return (

@@ -1,5 +1,23 @@
 #!/usr/bin/env python3
-"""Convert canonical YAML suppressions to Trivy .trivyignore.yaml format."""
+"""Static converter: canonical YAML → Trivy .trivyignore.yaml (commit-time).
+
+Generates suppressions/.trivyignore.yaml which is checked into the repo. This is a
+STATIC conversion — it runs at commit time without access to scan data. Limitations:
+
+- Wildcard patterns (e.g. org.wildfly.core/*) become global CVE suppressions (no purls
+  filter), since Trivy PURLs don't support wildcards.
+- Complex regex (negative lookahead, character classes) are skipped entirely.
+
+These limitations are resolved at scan time by resolve_suppressions.py, which matches
+regex patterns against real PURLs from a preliminary Trivy scan. The workflow uses the
+resolved file; this static output is kept for CI validation (validate-suppressions.yaml
+checks that it stays in sync with the canonical YAML).
+
+See also:
+    - resolve_suppressions.py: scan-time resolver that eliminates global suppressions
+    - validate-suppressions.yaml: CI workflow that diffs this output for drift detection
+    - suppressions/suppressions.yaml: canonical source of truth
+"""
 
 import datetime
 import re
@@ -9,27 +27,20 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
-from model import Suppression
-
-# Matches patterns like: ^pkg:maven/group\.name/artifact-name@.*$
-SIMPLE_PURL_RE = re.compile(
-    r"^\^?pkg:maven/"
-    r"([a-zA-Z0-9_.\\-]+)"    # group (may have escaped dots/hyphens)
-    r"/"
-    r"([a-zA-Z0-9_.\\-]+)"    # artifact (exact, no wildcards)
-    r"@\.\*\$?$"              # @.* (match all versions)
-)
+from model import Suppression, SIMPLE_PURL_RE
 
 
 def _regex_to_purl(pattern):
-    """Convert an OWASP DC packageUrl regex to a plain Trivy PURL.
+    """Convert an OWASP DC packageUrl regex to a plain Trivy PURL (best-effort).
 
-    Returns (purl, is_exact) where:
-    - purl is the plain PURL string (e.g., "pkg:maven/com.example/lib")
-    - is_exact is True if the pattern maps cleanly to a single PURL,
-      False if it contains wildcards and the conversion is lossy.
-
-    Returns (None, False) if the pattern can't be converted at all.
+    Three return paths:
+    1. Exact match (is_exact=True): pattern like ^pkg:maven/g/a@.*$ maps to one PURL.
+       Used directly in .trivyignore.yaml with a purls filter.
+    2. Group-level wildcard (is_exact=False): pattern has wildcard artifact (.*).
+       Returns group-only PURL; caller emits as a global suppression. These are
+       properly resolved at scan time by resolve_suppressions.py.
+    3. Unconvertible (None): negative lookahead (?!), character classes [^/], or
+       unparseable patterns. Skipped in static output, resolved at scan time.
     """
     m = SIMPLE_PURL_RE.match(pattern)
     if m:
@@ -114,6 +125,8 @@ def convert(input_path, output_path):
                 entry["statement"] = f"Triaged globally (original pattern: {s.package_url})"
 
             if s.until:
+                # Must be a datetime.date object, not a string — PyYAML emits unquoted
+                # YAML dates for date objects. Trivy's Go YAML parser rejects quoted strings.
                 entry["expired_at"] = datetime.date.fromisoformat(s.until)
 
             if "statement" not in entry:

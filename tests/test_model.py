@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
-"""Tests for the Suppression data model."""
+"""Tests for the Suppression dataclass serialization to/from canonical YAML dict format.
+
+Covers: round-trip fidelity (dict→Suppression→dict), empty/None handling for optional fields,
+and regex preservation — particularly negative lookahead patterns (e.g. the netty suppression)
+which are the most fragile to serialize.
+"""
 
 import pytest
 from model import Suppression
 
 
 class TestSuppressionToDict:
+    """Verify to_dict() produces the canonical YAML structure with correct nesting."""
     def test_minimal_cpe_correction(self):
         s = Suppression(
             id="test-cpe",
@@ -89,6 +95,7 @@ class TestSuppressionToDict:
 
 
 class TestSuppressionFromDict:
+    """Verify from_dict() correctly parses canonical YAML dicts back into Suppression objects."""
     def test_round_trip(self):
         original = Suppression(
             id="round-trip",
