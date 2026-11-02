@@ -724,6 +724,34 @@ class TestValidation:
         finally:
             Path(path).unlink(missing_ok=True)
 
+    def test_datetime_date_until_accepted(self):
+        """PyYAML parses unquoted YYYY-MM-DD as datetime.date — validator should coerce it."""
+        from datetime import date
+        from validate import validate
+
+        data = {
+            "version": "1.0",
+            "suppressions": [
+                {
+                    "id": "date-obj",
+                    "type": "cve-triage",
+                    "notes": "Test",
+                    "match": {"package-url": "^pkg:maven/a/b@.*$"},
+                    "suppress": {"cves": ["CVE-2024-00001"]},
+                    "until": date(2027, 3, 26),
+                },
+            ],
+        }
+        with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w", delete=False) as f:
+            yaml.dump(data, f, default_flow_style=False, sort_keys=False)
+            path = f.name
+
+        try:
+            errors, warnings = validate(path)
+            assert not any("until" in e.lower() for e in errors), f"Unexpected errors: {errors}"
+        finally:
+            Path(path).unlink(missing_ok=True)
+
     def test_non_dict_entry_reports_error(self):
         from validate import validate
 

@@ -100,8 +100,12 @@ def validate(input_path):
         # pending re-evaluation by the security team.
         until = entry.get("until")
         if until:
+            # PyYAML parses unquoted YYYY-MM-DD as datetime.date — coerce to string
+            # so authors don't need to remember to quote dates in YAML.
+            if isinstance(until, date):
+                until = until.isoformat()
             if not isinstance(until, str):
-                errors.append(f"{prefix} ({sup_id}): 'until' must be a string, got {type(until).__name__}")
+                errors.append(f"{prefix} ({sup_id}): 'until' must be a date string (YYYY-MM-DD), got {type(until).__name__}")
                 until = None
             elif len(until) != 10 or until[4] != '-' or until[7] != '-':
                 errors.append(f"{prefix} ({sup_id}): invalid 'until' date format: {until} (expected YYYY-MM-DD)")

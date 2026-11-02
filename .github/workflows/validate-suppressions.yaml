@@ -47,21 +47,7 @@ jobs:
         run: diff owasp-suppressions/owasp-suppressions-roundtrip.xml owasp-suppressions/owasp-suppressions-check.xml
 
       - name: Check original OWASP DC XML matches canonical YAML
-        run: |
-          python scripts/suppressions/migrate_from_owaspdc.py owasp-suppressions/owasp-suppressions.xml /tmp/from-xml.yaml
-          python scripts/suppressions/convert_to_owaspdc.py suppressions/suppressions.yaml /tmp/from-yaml.xml
-          python scripts/suppressions/migrate_from_owaspdc.py /tmp/from-yaml.xml /tmp/from-yaml-roundtrip.yaml
-          diff <(python -c "
-          import yaml
-          with open('/tmp/from-xml.yaml') as f: d = yaml.safe_load(f)
-          for s in sorted(d['suppressions'], key=lambda x: x['id']):
-              print(s['id'], sorted(s['suppress'].get('cves', []) + s['suppress'].get('vulnerability-names', [])))
-          ") <(python -c "
-          import yaml
-          with open('/tmp/from-yaml-roundtrip.yaml') as f: d = yaml.safe_load(f)
-          for s in sorted(d['suppressions'], key=lambda x: x['id']):
-              print(s['id'], sorted(s['suppress'].get('cves', []) + s['suppress'].get('vulnerability-names', [])))
-          ") || { echo "ERROR: owasp-suppressions.xml has drifted from suppressions.yaml — edit the canonical YAML and regenerate"; exit 1; }
+        run: python scripts/suppressions/check_xml_drift.py owasp-suppressions/owasp-suppressions.xml suppressions/suppressions.yaml
 
       - name: Run test suite
         run: python -m pytest tests/ -v
