@@ -38,6 +38,14 @@ def purl_from_simple_match(m):
     return f"pkg:maven/{group}/{artifact}"
 
 
+def parse_until_date(until_str, suppression_id):
+    """Parse an until date string into a datetime.date, with context on failure."""
+    try:
+        return date.fromisoformat(until_str)
+    except (ValueError, TypeError) as e:
+        raise ValueError(f"Suppression '{suppression_id}': invalid until date '{until_str}': {e}") from e
+
+
 @dataclass
 class Suppression:
     id: str

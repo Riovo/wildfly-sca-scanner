@@ -19,7 +19,6 @@ See also:
     - suppressions/suppressions.yaml: canonical source of truth
 """
 
-import datetime
 import re
 import sys
 from pathlib import Path
@@ -27,7 +26,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
-from model import Suppression, SIMPLE_PURL_RE, purl_from_simple_match
+from model import Suppression, SIMPLE_PURL_RE, purl_from_simple_match, parse_until_date
 
 
 def _regex_to_purl(pattern):
@@ -125,7 +124,7 @@ def convert(input_path, output_path):
             if s.until:
                 # Must be a datetime.date object, not a string — PyYAML emits unquoted
                 # YAML dates for date objects. Trivy's Go YAML parser rejects quoted strings.
-                entry["expired_at"] = datetime.date.fromisoformat(s.until)
+                entry["expired_at"] = parse_until_date(s.until, s.id)
 
             if "statement" not in entry:
                 statement_parts = []

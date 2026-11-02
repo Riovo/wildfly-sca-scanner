@@ -26,7 +26,6 @@ See also:
     - suppressions/suppressions.yaml: canonical source of truth for all suppression rules
 """
 
-import datetime
 import json
 import re
 import sys
@@ -35,7 +34,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
-from model import Suppression, SIMPLE_PURL_RE, purl_from_simple_match
+from model import Suppression, SIMPLE_PURL_RE, purl_from_simple_match, parse_until_date
 
 
 def _strip_version(purl):
@@ -160,7 +159,7 @@ def resolve(canonical_yaml_path, trivy_json_path, output_path):
                 # expired_at must be a datetime.date for PyYAML to emit an unquoted YAML date.
                 # Trivy's Go YAML parser rejects quoted date strings.
                 if s.until:
-                    entry["expired_at"] = datetime.date.fromisoformat(s.until)
+                    entry["expired_at"] = parse_until_date(s.until, s.id)
                 statement_parts = []
                 if s.notes:
                     statement_parts.append(s.notes.strip().split("\n")[0].strip())
@@ -185,7 +184,7 @@ def resolve(canonical_yaml_path, trivy_json_path, output_path):
         for cve in all_cve_ids:
             entry = {"id": cve, "purls": matched_purls}
             if s.until:
-                entry["expired_at"] = datetime.date.fromisoformat(s.until)
+                entry["expired_at"] = parse_until_date(s.until, s.id)
             statement_parts = [f"Resolved from pattern: {s.package_url}"]
             if s.notes:
                 statement_parts.append(s.notes.strip().split("\n")[0].strip())

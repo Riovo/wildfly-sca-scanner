@@ -7,12 +7,14 @@ on:
       - 'owasp-suppressions/**'
       - 'scripts/suppressions/**'
       - 'tests/**'
+      - '.github/workflows/validate-suppressions.yaml'
   pull_request:
     paths:
       - 'suppressions/**'
       - 'owasp-suppressions/**'
       - 'scripts/suppressions/**'
       - 'tests/**'
+      - '.github/workflows/validate-suppressions.yaml'
   workflow_dispatch:
 
 jobs:

@@ -124,7 +124,7 @@ def convert(input_path, output_path):
 
 if __name__ == "__main__":
     input_path = sys.argv[1] if len(sys.argv) > 1 else "suppressions/suppressions.yaml"
-    output_path = sys.argv[2] if len(sys.argv) > 2 else "owasp-suppressions/owasp-suppressions.xml"
+    output_path = sys.argv[2] if len(sys.argv) > 2 else "owasp-suppressions/owasp-suppressions-roundtrip.xml"
     try:
         convert(input_path, output_path)
     except ValueError as e:
