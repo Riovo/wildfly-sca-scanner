@@ -53,8 +53,8 @@ def _regex_to_purl(pattern):
     )
     if group_match:
         group = group_match.group(1).replace("\\.", ".").replace("\\-", "-")
-        # Check if this has negative lookahead or character classes — too complex
-        if "(?!" in pattern or "[^" in pattern:
+        # Check for regex constructs that can't be expressed as a simple PURL
+        if "(?" in pattern or "[^" in pattern:
             return None, False
         return f"pkg:maven/{group}", False
 

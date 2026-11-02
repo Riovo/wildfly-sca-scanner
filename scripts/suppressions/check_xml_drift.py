@@ -57,7 +57,7 @@ def check_drift(original_xml_path, canonical_yaml_path):
 def _extract_signatures(yaml_path):
     """Extract sorted signature tuples for comparison.
 
-    Compares: id, CVEs, vulnerability-names, CPEs, until date, and match patterns.
+    Compares: id, type, CVEs, vulnerability-names, CPEs, until date, and match patterns.
     """
     with open(yaml_path) as f:
         data = yaml.safe_load(f)
@@ -67,6 +67,7 @@ def _extract_signatures(yaml_path):
         match = s.get("match") or {}
         sig = (
             s["id"],
+            s.get("type"),
             sorted(suppress.get("cves", [])),
             sorted(suppress.get("vulnerability-names", [])),
             sorted(suppress.get("cpes", [])),

@@ -146,6 +146,11 @@ def resolve(canonical_yaml_path, trivy_json_path, output_path):
                     f"  WARNING: Skipping {s.id} — filePath-based match cannot be resolved to PURLs.",
                     file=sys.stderr,
                 )
+            else:
+                print(
+                    f"  WARNING: Skipping {s.id} — no package-url or file-path match defined.",
+                    file=sys.stderr,
+                )
             continue
 
         # Fast path: exact group/artifact patterns don't need scan data
