@@ -54,7 +54,7 @@ def _regex_to_purl(pattern):
     if group_match:
         group = group_match.group(1).replace("\\.", ".").replace("\\-", "-")
         # Check for regex constructs that can't be expressed as a simple PURL
-        if "(?" in pattern or "[^" in pattern:
+        if "(?" in pattern or "[" in pattern:
             return None, False
         return f"pkg:maven/{group}", False
 
@@ -80,6 +80,13 @@ def convert(input_path, output_path):
         all_cve_ids = s.cves + s.vulnerability_names
         if s.type == "cpe-correction" and not all_cve_ids:
             skipped_cpe += 1
+            continue
+
+        if not all_cve_ids:
+            print(
+                f"  WARNING: Skipping {s.id} — no CVEs or vulnerability-names to suppress.",
+                file=sys.stderr,
+            )
             continue
 
         if not s.package_url:

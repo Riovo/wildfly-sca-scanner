@@ -143,6 +143,13 @@ def resolve(canonical_yaml_path, trivy_json_path, output_path):
             skipped_cpe += 1
             continue
 
+        if not all_cve_ids:
+            print(
+                f"  WARNING: Skipping {s.id} — no CVEs or vulnerability-names to suppress.",
+                file=sys.stderr,
+            )
+            continue
+
         # filePath-based matches have no PURL equivalent in Trivy
         if not s.package_url:
             if s.file_path:
