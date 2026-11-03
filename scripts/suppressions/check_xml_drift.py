@@ -60,9 +60,9 @@ def _extract_signatures(yaml_path):
         sig = (
             s["id"],
             s.get("type"),
-            sorted(suppress.get("cves", [])),
-            sorted(suppress.get("vulnerability-names", [])),
-            sorted(suppress.get("cpes", [])),
+            sorted(suppress.get("cves") or []),
+            sorted(suppress.get("vulnerability-names") or []),
+            sorted(suppress.get("cpes") or []),
             s.get("until"),
             match.get("package-url"),
             match.get("file-path"),

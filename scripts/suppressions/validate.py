@@ -91,7 +91,7 @@ def validate(input_path):
         if not suppress.get("cves") and not suppress.get("cpes") and not suppress.get("vulnerability-names"):
             errors.append(f"{prefix} ({sup_id}): must suppress at least one CVE, vulnerability-name, or CPE")
 
-        for cve in suppress.get("cves", []) + suppress.get("vulnerability-names", []):
+        for cve in (suppress.get("cves") or []) + (suppress.get("vulnerability-names") or []):
             if not CVE_PATTERN.match(cve):
                 warnings.append(f"{prefix} ({sup_id}): CVE '{cve}' doesn't match expected format CVE-YYYY-NNNNN")
 

@@ -107,9 +107,9 @@ class Suppression:
             notes=d.get("notes", ""),
             package_url=match.get("package-url"),
             file_path=match.get("file-path"),
-            cves=suppress.get("cves", []),
-            cpes=suppress.get("cpes", []),
+            cves=suppress.get("cves") or [],
+            cpes=suppress.get("cpes") or [],
             until=until,
-            references=d.get("references", []),
-            vulnerability_names=suppress.get("vulnerability-names", []),
+            references=d.get("references") or [],
+            vulnerability_names=suppress.get("vulnerability-names") or [],
         )

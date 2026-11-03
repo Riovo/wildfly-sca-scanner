@@ -156,10 +156,10 @@ class TestFullPipeline:
             data = yaml.safe_load(f)
         for s in data["suppressions"]:
             if s["type"] == "cpe-correction":
-                assert not s["suppress"].get("cves", []), (
+                assert not (s["suppress"].get("cves") or []), (
                     f"CPE correction {s['id']} should not have CVEs"
                 )
-                assert not s["suppress"].get("vulnerability-names", []), (
+                assert not (s["suppress"].get("vulnerability-names") or []), (
                     f"CPE correction {s['id']} should not have vulnerability-names"
                 )
 

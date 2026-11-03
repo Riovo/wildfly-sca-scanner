@@ -163,6 +163,22 @@ class TestSuppressionFromDict:
         assert s.cves == []
         assert s.cpes == []
 
+    def test_null_list_values_in_suppress_handled(self):
+        """YAML `cves:` (no value) parses as None — from_dict must not crash."""
+        d = {
+            "id": "null-lists",
+            "type": "cve-triage",
+            "notes": "Test",
+            "match": {"package-url": "^pkg:maven/com\\.example/lib@.*$"},
+            "suppress": {"cves": None, "cpes": None, "vulnerability-names": None},
+            "references": None,
+        }
+        s = Suppression.from_dict(d)
+        assert s.cves == []
+        assert s.cpes == []
+        assert s.vulnerability_names == []
+        assert s.references == []
+
     def test_datetime_date_until_coerced_to_string(self):
         """PyYAML parses unquoted dates as datetime.date — from_dict must coerce to str."""
         from datetime import date
