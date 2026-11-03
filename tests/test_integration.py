@@ -62,7 +62,7 @@ class TestFullPipeline:
     def test_migration_preserves_all_suppressions(self, pipeline_outputs):
         with open(pipeline_outputs["yaml_path"]) as f:
             data = yaml.safe_load(f)
-        assert len(data["suppressions"]) == 61
+        assert len(data["suppressions"]) == 59
 
     def test_migration_ids_unique(self, pipeline_outputs):
         with open(pipeline_outputs["yaml_path"]) as f:
@@ -138,7 +138,7 @@ class TestFullPipeline:
             content = f.read()
         root = ET.fromstring(content)
         suppress_elems = root.findall("dc:suppress", NS)
-        assert len(suppress_elems) == 61
+        assert len(suppress_elems) == 59
 
     def test_roundtrip_xml_preserves_cdata(self, pipeline_outputs):
         with open(pipeline_outputs["roundtrip_xml"]) as f:

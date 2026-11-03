@@ -9,6 +9,7 @@ Used by: .github/workflows/validate-suppressions.yaml
 """
 
 import sys
+import tempfile
 from pathlib import Path
 
 import yaml
@@ -26,16 +27,11 @@ def check_drift(original_xml_path, canonical_yaml_path):
       2. canonical YAML → convert to XML → migrate back → YAML₂
     If the sorted (id, CVEs) tuples differ, the XML has drifted.
     """
-    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        from_xml_path = str(Path(tmp) / "from-xml.yaml")
+        from_yaml_xml_path = str(Path(tmp) / "from-yaml.xml")
+        from_yaml_rt_path = str(Path(tmp) / "from-yaml-rt.yaml")
 
-    with tempfile.NamedTemporaryFile(suffix=".yaml", delete=False) as f:
-        from_xml_path = f.name
-    with tempfile.NamedTemporaryFile(suffix=".xml", delete=False) as f:
-        from_yaml_xml_path = f.name
-    with tempfile.NamedTemporaryFile(suffix=".yaml", delete=False) as f:
-        from_yaml_rt_path = f.name
-
-    try:
         migrate(original_xml_path, from_xml_path)
         convert_to_owaspdc(canonical_yaml_path, from_yaml_xml_path)
         migrate(from_yaml_xml_path, from_yaml_rt_path)
@@ -48,10 +44,6 @@ def check_drift(original_xml_path, canonical_yaml_path):
                   "— edit the canonical YAML and regenerate", file=sys.stderr)
             return False
         return True
-    finally:
-        Path(from_xml_path).unlink(missing_ok=True)
-        Path(from_yaml_xml_path).unlink(missing_ok=True)
-        Path(from_yaml_rt_path).unlink(missing_ok=True)
 
 
 def _extract_signatures(yaml_path):

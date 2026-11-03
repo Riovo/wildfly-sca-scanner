@@ -14,7 +14,6 @@ See also:
     - validate-suppressions.yaml: CI workflow that runs the drift check
 """
 
-import re
 import sys
 from pathlib import Path
 

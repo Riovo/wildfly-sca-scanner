@@ -19,12 +19,12 @@ jobs:
                   standard-upstream, preview-upstream,
                   standard-maintenance, ee10-maintenance, preview-maintenance]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
 
       - name: Cache WildFly Installation
         if: ${{ !contains(matrix.version, 'maintenance') || vars.MAINTENANCE_CI != 'OFF' }}
         id: wildfly-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830  # v4
         with:
           path: ${{ github.workspace }}/wildfly
           key: wildfly-${{ matrix.version }}
@@ -33,10 +33,10 @@ jobs:
 
       - name: Cache Trivy DB
         if: ${{ !contains(matrix.version, 'maintenance') || vars.MAINTENANCE_CI != 'OFF' }}
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4
         with:
           path: ~/.cache/trivy
-          key: trivy-db-${{ github.run_id }}-${{ strategy.job-index }}
+          key: trivy-db-${{ strategy.job-index }}
           restore-keys: trivy-db-
 
       - name: Preliminary Trivy Scan (discover packages)
@@ -51,7 +51,7 @@ jobs:
 
       - name: Setup Python
         if: ${{ !contains(matrix.version, 'maintenance') || vars.MAINTENANCE_CI != 'OFF' }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: '3.12'
 
@@ -65,6 +65,7 @@ jobs:
             suppressions/.trivyignore-resolved.yaml
 
       - name: Run Trivy Scan (SARIF)
+        id: trivy-sarif
         if: ${{ !contains(matrix.version, 'maintenance') || vars.MAINTENANCE_CI != 'OFF' }}
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
         with:
@@ -76,7 +77,7 @@ jobs:
           trivyignores: 'suppressions/.trivyignore-resolved.yaml'
 
       - name: Upload SARIF to Code Scanning
-        if: ${{ !cancelled() && (!contains(matrix.version, 'maintenance') || vars.MAINTENANCE_CI != 'OFF') }}
+        if: ${{ !cancelled() && steps.trivy-sarif.outcome == 'success' && (!contains(matrix.version, 'maintenance') || vars.MAINTENANCE_CI != 'OFF') }}
         uses: github/codeql-action/upload-sarif@4bfa242aa49c5f7c6770b98670d354a7dfac05f8  # v3
         with:
           sarif_file: 'trivy-results.sarif'
@@ -95,7 +96,7 @@ jobs:
 
       - name: Upload Scan Results
         if: ${{ success() && (!contains(matrix.version, 'maintenance') || vars.MAINTENANCE_CI != 'OFF') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
         with:
           name: trivy-scan-results-${{ matrix.version }}
           path: |
@@ -104,7 +105,7 @@ jobs:
 
       - name: Upload Log File
         if: ${{ failure() && (!contains(matrix.version, 'maintenance') || vars.MAINTENANCE_CI != 'OFF') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
         with:
           name: trivy-log-files-${{ matrix.version }}
-          path: ~/work/**/*.log
+          path: ${{ github.workspace }}/**/*.log

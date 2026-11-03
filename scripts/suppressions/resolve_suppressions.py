@@ -48,6 +48,8 @@ def _strip_version(purl):
     syntax, and versioned PURLs break on patch bumps. WildFly doesn't ship multiple major
     versions of the same artifact, so this is the safer tradeoff.
     """
+    # Also strips qualifiers (?type=pom) and subpaths (#sub/path) — intentional,
+    # since Trivy matches on the pkg:type/ns/name prefix.
     at = purl.find("@")
     return purl[:at] if at != -1 else purl
 
@@ -78,8 +80,11 @@ def _extract_purls(trivy_json):
 def _resolve_pattern(pattern, discovered_purls):
     """Match a suppression regex against discovered PURLs.
 
-    Runs the original OWASP DC regex against each real PURL from the Trivy scan.
-    This handles all pattern types: wildcards, negative lookahead (?!...), character
+    Uses fullmatch() rather than search() for defensive matching — all canonical
+    patterns use ^...$ anchors, but fullmatch prevents partial matches if an
+    unanchored pattern is added.
+
+    Handles all pattern types: wildcards, negative lookahead (?!...), character
     classes [^/], alternation (a|b), and version-specific constraints (@4\\..*).
 
     Returns version-stripped PURLs (sorted, deduplicated) so the .trivyignore.yaml
@@ -92,7 +97,7 @@ def _resolve_pattern(pattern, discovered_purls):
 
     matched = set()
     for purl in discovered_purls:
-        if compiled.search(purl):
+        if compiled.fullmatch(purl):
             matched.add(_strip_version(purl))
     return sorted(matched)
 

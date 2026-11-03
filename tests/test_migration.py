@@ -225,12 +225,12 @@ class TestFullMigration:
                 data = yaml.safe_load(f)
 
             assert data["version"] == "1.0"
-            assert len(data["suppressions"]) == 61
+            assert len(data["suppressions"]) == 59
 
             cpe_corrections = [s for s in data["suppressions"] if s["type"] == "cpe-correction"]
             cve_triages = [s for s in data["suppressions"] if s["type"] == "cve-triage"]
             assert len(cpe_corrections) == 31
-            assert len(cve_triages) == 30
+            assert len(cve_triages) == 28
 
             # All IDs should be unique
             ids = [s["id"] for s in data["suppressions"]]

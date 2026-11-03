@@ -144,8 +144,8 @@ def convert(input_path, output_path):
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_path, "w") as f:
-        f.write("# Generated from suppressions/suppressions.yaml — do not edit directly.\n")
-        f.write("# Regenerate with: python scripts/suppressions/convert_to_trivy.py\n\n")
+        f.write("# WARNING: Some entries lack purls (global CVE suppressions from wildcard patterns).\n")
+        f.write("# The scan workflow generates a resolved version with exact PURLs — do not use this file directly.\n\n")
         yaml.dump(trivy_data, f, default_flow_style=False, sort_keys=False, allow_unicode=True, width=120)
 
     print(f"Converted {len(trivy_entries)} CVE suppressions to Trivy format")
