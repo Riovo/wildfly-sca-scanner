@@ -3,7 +3,9 @@ package org.wildfly.security.sca.suppressions.converter;
 import org.wildfly.security.sca.suppressions.model.PurlUtils;
 import org.wildfly.security.sca.suppressions.model.Suppression;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Represent;
@@ -45,9 +47,9 @@ public final class TrivyConverter {
         List<Map<String, Object>> entries = new ArrayList<>();
 
         for (Suppression s : suppressions) {
-            List<String> allCveIds = s.getAllCveIds();
+            List<String> allCveIds = s.getAllVulnerabilityIds();
 
-            if (s.getType().equals("cpe-correction") && allCveIds.isEmpty()) {
+            if ("cpe-correction".equals(s.getType()) && allCveIds.isEmpty()) {
                 skippedCpe++;
                 continue;
             }
@@ -154,7 +156,7 @@ public final class TrivyConverter {
     @SuppressWarnings("unchecked")
     private static Map<String, Object> loadYaml(Path path) {
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            Map<String, Object> data = new Yaml().load(reader);
+            Map<String, Object> data = new Yaml(new SafeConstructor(new LoaderOptions())).load(reader);
             if (data == null || !data.containsKey("suppressions")) {
                 throw new IllegalArgumentException(path + " is empty or missing 'suppressions' key");
             }
@@ -172,7 +174,10 @@ public final class TrivyConverter {
 
     private static void writeOutput(Path path, Map<String, Object> data) {
         try {
-            Files.createDirectories(path.getParent());
+            Path parent = path.toAbsolutePath().getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

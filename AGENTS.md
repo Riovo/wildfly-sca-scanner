@@ -38,8 +38,11 @@ When adding or modifying suppressions:
 2. Include `notes` explaining why the suppression is valid, with references to tracking issues (JIRA keys like `WFLY-*` or GitHub issue numbers).
 3. For CVE suppressions, set an `until` date (typically 12 months out) so the suppression is periodically re-evaluated.
 4. CPE suppressions that correct permanent GAV-to-CPE mismatches generally do not need an `until` date.
-5. Regenerate derived files: `java -jar suppressions-tool/target/suppressions-tool-1.0.0-SNAPSHOT.jar convert-trivy` and `convert-owaspdc`.
-6. CI validates the canonical YAML and checks that generated files are in sync on every push.
+5. Regenerate derived files:
+   - `java -jar suppressions-tool/target/suppressions-tool-1.0.0-SNAPSHOT.jar convert-trivy suppressions/suppressions.yaml suppressions/.trivyignore.yaml`
+   - `java -jar suppressions-tool/target/suppressions-tool-1.0.0-SNAPSHOT.jar convert-owaspdc suppressions/suppressions.yaml owasp-suppressions/owasp-suppressions-roundtrip.xml`
+6. Apply the same change to `owasp-suppressions/owasp-suppressions.xml` — CI runs `check-drift` and fails if this file does not match the canonical YAML.
+7. CI validates the canonical YAML and checks that generated files are in sync on every push.
 
 ## Working on the Suppressions Tool
 

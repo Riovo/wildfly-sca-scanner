@@ -2,7 +2,9 @@ package org.wildfly.security.sca.suppressions.drift;
 
 import org.wildfly.security.sca.suppressions.converter.OwaspDcConverter;
 import org.wildfly.security.sca.suppressions.migration.OwaspDcMigrator;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,8 +12,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public final class DriftChecker {
 
@@ -52,12 +56,15 @@ public final class DriftChecker {
     List<List<String>> extractSignatures(Path yamlPath) {
         Map<String, Object> data;
         try (InputStream in = Files.newInputStream(yamlPath)) {
-            data = new Yaml().load(in);
+            data = new Yaml(new SafeConstructor(new LoaderOptions())).load(in);
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot read YAML: " + yamlPath, e);
         }
 
         List<Map<String, Object>> entries = (List<Map<String, Object>>) data.get("suppressions");
+        if (entries == null) {
+            throw new IllegalArgumentException("YAML has no 'suppressions' key: " + yamlPath);
+        }
         List<List<String>> signatures = new ArrayList<>();
 
         for (Map<String, Object> s : entries) {
@@ -108,9 +115,8 @@ public final class DriftChecker {
     }
 
     private void cleanUp(Path dir) {
-        try {
-            Files.walk(dir)
-                    .sorted(java.util.Comparator.reverseOrder())
+        try (Stream<Path> walk = Files.walk(dir)) {
+            walk.sorted(Comparator.reverseOrder())
                     .forEach(p -> {
                         try { Files.deleteIfExists(p); } catch (IOException ignored) {}
                     });

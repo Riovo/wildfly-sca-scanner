@@ -17,7 +17,9 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 public final class SuppressionValidator {
 
@@ -30,7 +32,7 @@ public final class SuppressionValidator {
 
         Object data;
         try (BufferedReader reader = Files.newBufferedReader(inputPath, StandardCharsets.UTF_8)) {
-            data = new Yaml().load(reader);
+            data = new Yaml(new SafeConstructor(new LoaderOptions())).load(reader);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

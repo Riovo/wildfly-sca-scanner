@@ -54,7 +54,7 @@ public final class OwaspDcMigrator {
             System.out.println("\nWARNING: " + expired.size() + " suppression(s) have expired 'until' dates:");
             for (Suppression s : expired) {
                 System.out.println("  - " + s.getId() + ": until=" + s.getUntil() +
-                        " (" + String.join(", ", s.getAllCveIds()) + ")");
+                        " (" + String.join(", ", s.getAllVulnerabilityIds()) + ")");
             }
             System.out.println();
         }
@@ -128,7 +128,7 @@ public final class OwaspDcMigrator {
             artifact = "unknown";
         }
 
-        List<String> allCveIds = s.getAllCveIds();
+        List<String> allCveIds = s.getAllVulnerabilityIds();
         if (!s.getCpes().isEmpty() && allCveIds.isEmpty()) {
             String cpePart = s.getCpes().get(0);
             String[] parts = cpePart.split(":");
@@ -208,7 +208,10 @@ public final class OwaspDcMigrator {
 
     private void writeOutput(Path outputPath, Map<String, Object> data) {
         try {
-            Files.createDirectories(outputPath.getParent());
+            Path parent = outputPath.toAbsolutePath().getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             try (BufferedWriter w = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8)) {
                 w.write("# Canonical vulnerability suppression rules\n");
                 w.write("# Source of truth — scanner-specific formats are generated from this file.\n");

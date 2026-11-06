@@ -1,7 +1,9 @@
 package org.wildfly.security.sca.suppressions.converter;
 
 import org.wildfly.security.sca.suppressions.model.Suppression;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,7 +53,10 @@ public final class OwaspDcConverter {
         sb.append("</suppressions>\n");
 
         try {
-            Files.createDirectories(outputPath.getParent());
+            Path parent = outputPath.toAbsolutePath().getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             Files.writeString(outputPath, sb.toString(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -109,7 +114,7 @@ public final class OwaspDcConverter {
     @SuppressWarnings("unchecked")
     private static List<Suppression> loadSuppressions(Path path) {
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            Map<String, Object> data = new Yaml().load(reader);
+            Map<String, Object> data = new Yaml(new SafeConstructor(new LoaderOptions())).load(reader);
             if (data == null || !data.containsKey("suppressions")) {
                 throw new IllegalArgumentException(path + " is empty or missing 'suppressions' key");
             }

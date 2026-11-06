@@ -6,7 +6,9 @@ import org.wildfly.security.sca.suppressions.converter.TrivyConverter;
 import org.wildfly.security.sca.suppressions.model.PurlUtils;
 import org.wildfly.security.sca.suppressions.model.Suppression;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -53,7 +55,7 @@ public final class SuppressionResolver {
         List<Map<String, Object>> trivyEntries = new ArrayList<>();
 
         for (Suppression s : suppressions) {
-            List<String> allCveIds = s.getAllCveIds();
+            List<String> allCveIds = s.getAllVulnerabilityIds();
 
             if ("cpe-correction".equals(s.getType()) && allCveIds.isEmpty()) {
                 skippedCpe++;
@@ -206,7 +208,7 @@ public final class SuppressionResolver {
     @SuppressWarnings("unchecked")
     private Map<String, Object> loadYaml(Path path) {
         try (InputStream in = Files.newInputStream(path)) {
-            return new Yaml().load(in);
+            return new Yaml(new SafeConstructor(new LoaderOptions())).load(in);
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot read YAML: " + path, e);
         }
@@ -222,7 +224,10 @@ public final class SuppressionResolver {
 
     private void writeOutput(Path outputPath, Map<String, Object> data) {
         try {
-            Files.createDirectories(outputPath.getParent());
+            Path parent = outputPath.toAbsolutePath().getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             try (BufferedWriter w = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8)) {
                 w.write("# Resolved .trivyignore.yaml — generated at scan time from canonical YAML + Trivy scan.\n");
                 w.write("# All entries have exact PURLs; no global suppressions.\n\n");

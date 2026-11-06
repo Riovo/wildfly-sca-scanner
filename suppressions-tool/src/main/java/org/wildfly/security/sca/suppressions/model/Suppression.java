@@ -120,7 +120,7 @@ public final class Suppression {
     public List<String> getVulnerabilityNames() { return vulnerabilityNames; }
     public void setVulnerabilityNames(List<String> vulnerabilityNames) { this.vulnerabilityNames = vulnerabilityNames; }
 
-    public List<String> getAllCveIds() {
+    public List<String> getAllVulnerabilityIds() {
         List<String> all = new ArrayList<>(cves);
         all.addAll(vulnerabilityNames);
         return all;
