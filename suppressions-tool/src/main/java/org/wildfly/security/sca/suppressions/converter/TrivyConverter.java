@@ -4,6 +4,10 @@ import org.wildfly.security.sca.suppressions.model.PurlUtils;
 import org.wildfly.security.sca.suppressions.model.Suppression;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.representer.Represent;
+import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,10 +19,12 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -178,9 +184,29 @@ public final class TrivyConverter {
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.write("# WARNING: Some entries lack purls (global CVE suppressions from wildcard patterns).\n");
             writer.write("# The scan workflow generates a resolved version with exact PURLs — do not use this file directly.\n\n");
-            new Yaml(opts).dump(data, writer);
+            new Yaml(new DateOnlyRepresenter(opts), opts).dump(data, writer);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        }
+    }
+
+    public static final class DateOnlyRepresenter extends Representer {
+        public DateOnlyRepresenter(DumperOptions options) {
+            super(options);
+            this.representers.put(Date.class, new RepresentDateOnly());
+        }
+
+        private class RepresentDateOnly implements Represent {
+            @Override
+            public Node representData(Object data) {
+                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                cal.setTime((Date) data);
+                String formatted = String.format("%04d-%02d-%02d",
+                        cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH) + 1,
+                        cal.get(Calendar.DAY_OF_MONTH));
+                return representScalar(Tag.TIMESTAMP, formatted);
+            }
         }
     }
 

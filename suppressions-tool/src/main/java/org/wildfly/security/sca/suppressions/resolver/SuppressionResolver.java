@@ -2,6 +2,7 @@ package org.wildfly.security.sca.suppressions.resolver;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.wildfly.security.sca.suppressions.converter.TrivyConverter;
 import org.wildfly.security.sca.suppressions.model.PurlUtils;
 import org.wildfly.security.sca.suppressions.model.Suppression;
 import org.yaml.snakeyaml.DumperOptions;
@@ -229,7 +230,7 @@ public final class SuppressionResolver {
                 DumperOptions opts = new DumperOptions();
                 opts.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
                 opts.setWidth(120);
-                new Yaml(opts).dump(data, w);
+                new Yaml(new TrivyConverter.DateOnlyRepresenter(opts), opts).dump(data, w);
             }
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot write output: " + outputPath, e);
