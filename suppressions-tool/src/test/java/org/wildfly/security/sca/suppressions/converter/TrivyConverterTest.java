@@ -202,4 +202,25 @@ class TrivyConverterTest {
         assertThatThrownBy(() -> new TrivyConverter().convert(input, output))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void testDateFormattedAsBareDateOnly() throws IOException {
+        Path input = writeYaml("""
+                suppressions:
+                  - id: date-format
+                    type: cve-triage
+                    notes: Test date format
+                    until: "2027-10-30"
+                    match:
+                      package-url: '^pkg:maven/com\\.example/lib@.*$'
+                    suppress:
+                      cves:
+                        - CVE-2024-00001
+                """);
+        Path output = tempDir.resolve("output.yaml");
+        new TrivyConverter().convert(input, output);
+        String content = Files.readString(output);
+        assertThat(content).contains("expired_at: 2027-10-30");
+        assertThat(content).doesNotContain("T00:00:00");
+    }
 }

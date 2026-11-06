@@ -53,8 +53,13 @@ public final class SuppressionValidator {
             errors.add("Missing 'suppressions' field");
             return new ValidationResult(errors, warnings);
         }
-        if (!(top.get("suppressions") instanceof List<?> suppressions)) {
-            errors.add("'suppressions' must be a list, got " + top.get("suppressions").getClass().getSimpleName());
+        Object rawSuppressions = top.get("suppressions");
+        if (rawSuppressions == null) {
+            errors.add("'suppressions' value is null");
+            return new ValidationResult(errors, warnings);
+        }
+        if (!(rawSuppressions instanceof List<?> suppressions)) {
+            errors.add("'suppressions' must be a list, got " + rawSuppressions.getClass().getSimpleName());
             return new ValidationResult(errors, warnings);
         }
 

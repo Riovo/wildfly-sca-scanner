@@ -61,9 +61,12 @@ public final class DriftChecker {
             throw new IllegalArgumentException("Cannot read YAML: " + yamlPath, e);
         }
 
+        if (data == null || !data.containsKey("suppressions")) {
+            throw new IllegalArgumentException("YAML is empty or has no 'suppressions' key: " + yamlPath);
+        }
         List<Map<String, Object>> entries = (List<Map<String, Object>>) data.get("suppressions");
         if (entries == null) {
-            throw new IllegalArgumentException("YAML has no 'suppressions' key: " + yamlPath);
+            throw new IllegalArgumentException("'suppressions' value is null: " + yamlPath);
         }
         List<List<String>> signatures = new ArrayList<>();
 

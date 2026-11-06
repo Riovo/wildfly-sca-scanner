@@ -181,6 +181,17 @@ class SuppressionValidatorTest {
     }
 
     @Test
+    void testNullSuppressionsValue() throws IOException {
+        Path file = writeYaml("""
+                version: '1.0'
+                suppressions:
+                """);
+        ValidationResult result = new SuppressionValidator().validate(file);
+        assertThat(result.hasErrors()).isTrue();
+        assertThat(result.errors()).anyMatch(e -> e.contains("null"));
+    }
+
+    @Test
     void testValidRealFile() {
         Path realFile = Path.of(System.getProperty("user.dir"))
                 .getParent().resolve("suppressions/suppressions.yaml");

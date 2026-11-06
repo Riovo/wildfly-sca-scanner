@@ -93,7 +93,7 @@ class OwaspDcConverterTest {
                       cpes:
                         - "cpe:/a:example:product"
                 """);
-        assertThat(xml).doesNotContain("]]>end");
+        assertThat(xml).doesNotContain("Injection test ]]> end");
         assertThat(xml).contains("]]]]><![CDATA[>");
     }
 
