@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,7 +42,7 @@ class SuppressionResolverTest {
         Path jsonPath = writeJson(json);
         Path output = tempDir.resolve("resolved.yaml");
         new SuppressionResolver().resolve(yamlPath, jsonPath, output);
-        Map<String, Object> data = new Yaml().load(Files.readString(output));
+        Map<String, Object> data = new Yaml(new SafeConstructor(new LoaderOptions())).load(Files.readString(output));
         return (List<Map<String, Object>>) data.get("vulnerabilities");
     }
 

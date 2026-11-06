@@ -3,7 +3,9 @@ package org.wildfly.security.sca.suppressions.migration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,7 +36,7 @@ class OwaspDcMigratorTest {
         Files.writeString(input, wrapXml(innerXml));
         Path output = tempDir.resolve("output.yaml");
         new OwaspDcMigrator().migrate(input, output);
-        Map<String, Object> data = new Yaml().load(Files.readString(output));
+        Map<String, Object> data = new Yaml(new SafeConstructor(new LoaderOptions())).load(Files.readString(output));
         return (List<Map<String, Object>>) data.get("suppressions");
     }
 
@@ -218,7 +220,7 @@ class OwaspDcMigratorTest {
             Path output = tempDir.resolve("migrated.yaml");
             new OwaspDcMigrator().migrate(realXml, output);
 
-            Map<String, Object> data = new Yaml().load(Files.readString(output));
+            Map<String, Object> data = new Yaml(new SafeConstructor(new LoaderOptions())).load(Files.readString(output));
             List<Map<String, Object>> suppressions = (List<Map<String, Object>>) data.get("suppressions");
 
             assertThat(suppressions).isNotEmpty();

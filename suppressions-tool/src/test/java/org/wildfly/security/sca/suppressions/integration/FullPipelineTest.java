@@ -8,7 +8,9 @@ import org.wildfly.security.sca.suppressions.converter.TrivyConverter;
 import org.wildfly.security.sca.suppressions.migration.OwaspDcMigrator;
 import org.wildfly.security.sca.suppressions.validator.SuppressionValidator;
 import org.wildfly.security.sca.suppressions.validator.ValidationResult;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
@@ -63,7 +65,7 @@ class FullPipelineTest {
     @SuppressWarnings("unchecked")
     void testAllSuppressionsPreserved() throws IOException {
         assumeTrue(hasRealFiles);
-        Map<String, Object> data = new Yaml().load(Files.readString(migratedYaml));
+        Map<String, Object> data = new Yaml(new SafeConstructor(new LoaderOptions())).load(Files.readString(migratedYaml));
         List<Map<String, Object>> suppressions = (List<Map<String, Object>>) data.get("suppressions");
         assertThat(suppressions).isNotEmpty();
     }
@@ -72,7 +74,7 @@ class FullPipelineTest {
     @SuppressWarnings("unchecked")
     void testUniqueIds() throws IOException {
         assumeTrue(hasRealFiles);
-        Map<String, Object> data = new Yaml().load(Files.readString(migratedYaml));
+        Map<String, Object> data = new Yaml(new SafeConstructor(new LoaderOptions())).load(Files.readString(migratedYaml));
         List<Map<String, Object>> suppressions = (List<Map<String, Object>>) data.get("suppressions");
         Set<String> ids = suppressions.stream()
                 .map(s -> (String) s.get("id"))
@@ -83,7 +85,7 @@ class FullPipelineTest {
     @Test
     void testTrivyOutputParseable() throws IOException {
         assumeTrue(hasRealFiles);
-        Map<String, Object> data = new Yaml().load(Files.readString(trivyOutput));
+        Map<String, Object> data = new Yaml(new SafeConstructor(new LoaderOptions())).load(Files.readString(trivyOutput));
         assertThat(data).containsKey("vulnerabilities");
     }
 
@@ -103,8 +105,8 @@ class FullPipelineTest {
         Path secondYaml = sharedDir.resolve("second.yaml");
         new OwaspDcMigrator().migrate(realXml, secondYaml);
 
-        Map<String, Object> original = new Yaml().load(Files.readString(migratedYaml));
-        Map<String, Object> second = new Yaml().load(Files.readString(secondYaml));
+        Map<String, Object> original = new Yaml(new SafeConstructor(new LoaderOptions())).load(Files.readString(migratedYaml));
+        Map<String, Object> second = new Yaml(new SafeConstructor(new LoaderOptions())).load(Files.readString(secondYaml));
 
         List<?> origList = (List<?>) original.get("suppressions");
         List<?> secondList = (List<?>) second.get("suppressions");
@@ -115,7 +117,7 @@ class FullPipelineTest {
     @SuppressWarnings("unchecked")
     void testRoundTripPreservesCves() throws IOException {
         assumeTrue(hasRealFiles);
-        Map<String, Object> data = new Yaml().load(Files.readString(migratedYaml));
+        Map<String, Object> data = new Yaml(new SafeConstructor(new LoaderOptions())).load(Files.readString(migratedYaml));
         List<Map<String, Object>> suppressions = (List<Map<String, Object>>) data.get("suppressions");
 
         Set<String> allCves = new HashSet<>();
